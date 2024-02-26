@@ -13,6 +13,8 @@ jobs:
           cd back
           npm install
           npm run test
+        env:
+          TEST_MONGODB_URI: ${{secrets.MONGODB_URI}}
 
       - name: Deploy
         # Only run this step if the branch is main
