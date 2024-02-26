@@ -8,12 +8,19 @@ const api = supertest(app)
 
 beforeEach(async () => {
   await User.deleteMany({})
-  const passwordHash = await bcrypt.hash('testpassword123', 10)
-  const user = new User({ username: 'testaccount', passwordHash })
-  await user.save()
+
+  const newUser = {
+    username: 'testaccount',
+    password: 'testpassword123!',
+}
+  await api
+  .post('/api/signup')
+  .send(newUser)
+  
 })
 
 test('Login works with correct username and password', async () => {
+
     const newUser = {
         username: 'testaccount',
         password: 'testpassword123!',
@@ -38,7 +45,7 @@ test('Login works with correct username and password', async () => {
   test('Login fails with nonexistent account', async () => {
     const newUser = {
       username: 'thisaccountdoesnotexist',
-      password: 'testpassword123',
+      password: 'testpassword123!',
   }
   await api
       .post('/api/login')
