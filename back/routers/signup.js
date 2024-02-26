@@ -20,9 +20,8 @@ signupRouter.post('/', async (req, res) => {
         res.json({"error":"username must have at least 4 characters"})
     }
     else if (password.length<6||!(specialChars.test(password)||numbers.test(password))){
-        console.log(numbers.test(password))
         res.status(400)
-        res.json({"error":"pass must have at least 6 characters and at least one number or special character"})
+        res.json({"error":"password must have at least 6 characters and at least one number or special character"})
     }
     else {
         const user = new User({
