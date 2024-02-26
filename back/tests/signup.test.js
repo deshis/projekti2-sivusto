@@ -23,7 +23,7 @@ test('creating new account succeeds', async () => {
 
     const newUser = {
         username: 'validusername',
-        password: 'ValidPassword123!',
+        password: 'ValidPassword123!'
     }
 
     await api
@@ -44,7 +44,7 @@ test('creating duplicate account fails', async () => {
 
     const newUser = {
         username: 'alreadyexists',
-        password: 'ValidPassword123!',
+        password: 'ValidPassword123!'
     }
 
     await api
@@ -62,7 +62,7 @@ test('creating new account with invalid username fails', async () => {
     
     const newUser = {
         username: 'a',
-        password: 'ValidPassword123!',
+        password: 'ValidPassword123!'
     }
     
     await api
