@@ -1,11 +1,13 @@
 const express = require ("express")
 const app = express()
 const cors = require('cors')
-const towerRouter = require('./controllers/randomTower')
+const towerRouter = require('./routers/randomTower')
+
 
 app.use(cors())
 
 app.use("/api/randomtower", towerRouter)
+
 
 
 const unknownEndpoint = (request, response) => {
