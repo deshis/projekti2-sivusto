@@ -27,7 +27,7 @@ beforeEach(async () => {
 test('cannot add score without token', async () => {
     await api
         .post('/api/scores')
-        .send({body:5})
+        .send({"score":5})
         .expect(401)
   })
 
@@ -35,16 +35,18 @@ test('cannot add score without token', async () => {
     await api
         .post('/api/scores')
         .auth("notarealtoken", { type: 'bearer' })
-        .send({body:5})
+        .send({"score":5})
         .expect(401)
   })
 
 test('adding a new score with valid token works', async () => {
-    await api
+    const response = await api
         .post('/api/scores')
         .auth(testUserToken, { type: 'bearer' })
-        .send({body:5})
+        .send({"score":5})
         .expect(201)
+
+    expect(response.body.scores).toContainEqual(5)
   })
 
 
@@ -66,9 +68,10 @@ test('cannot get scores without token', async () => {
   })
 
 test('getting scores with valid token works', async () => {
-    await api
+    const response = await api
         .get('/api/scores')
         .auth(testUserToken, { type: 'bearer' })
         .expect(200)
+    expect(Array.isArray(response.body.scores)).toBe(true)
   })
 
