@@ -25,7 +25,7 @@ const towers = [
     "Beast Handler"
 ]
 
-towerRouter.get('/', async (req, res) => {
+towerRouter.get('/randomtower', async (req, res) => {
     let type = towers[Math.floor(Math.random() * towers.length)]
     let tier = Math.floor(Math.random() * 6);
     let path = Math.floor(Math.random() * 3)+1;
@@ -33,6 +33,12 @@ towerRouter.get('/', async (req, res) => {
         "type":type,
         "tier":tier,
         "path":path
+    })
+})
+
+towerRouter.get('/', async (req, res) => {
+    res.json({
+        "towers":towers
     })
 })
 
