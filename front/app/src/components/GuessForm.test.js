@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event'
 test('GuessForm updates parent state and calls on submit', async () => {
     const user = userEvent.setup()
     const createGuess = jest.fn()
-  
-    render(<GuessForm createGuess={createGuess} />)
+
+    render(<GuessForm createGuess={createGuess} options={[]}/>)
   
     const input = screen.getByRole('textbox')
     const sendButton = screen.getByText('enter')
