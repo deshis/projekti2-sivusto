@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Test and Deploy
         run: |
-          cd front/app
+          cd ./front/app
           npm i
           npm run build
           npm run test
