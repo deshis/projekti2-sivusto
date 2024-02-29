@@ -9,7 +9,7 @@ const App = () => {
   
   useEffect(() => {
     axios
-      .get('https://projekti2-sivusto.onrender.com/api/randomtower')
+      .get('https://projekti2-sivusto.onrender.com/api/towers/randomtower')
       .then(response => {
         console.log('promise fulfilled')
         console.log(response.data.type)
