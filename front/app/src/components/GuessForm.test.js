@@ -19,5 +19,4 @@ test('GuessForm updates parent state and calls on submit', async () => {
     expect(createGuess.mock.calls).toHaveLength(1)
     console.log(createGuess.mock.calls)
     expect(createGuess.mock.calls[0][0]).toBe('monkey?')
-    
 })
