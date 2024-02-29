@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Test and Deploy
-      - run: |
+        run: |
           cd front/app
           npm i
           npm run build
