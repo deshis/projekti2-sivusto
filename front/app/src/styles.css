@@ -1,0 +1,60 @@
+body{
+    background-color: #1e1f26;
+}
+
+label{
+    color: #dbdbdb;
+    font-family: "Arial";
+    font-size: 150%;
+    margin: 25px;
+}
+
+h1{
+    color: #dbdbdb;
+    font-family: "Arial";
+    font-size: 250%;
+}
+
+.guess{
+    font-family: 'Arial';
+    font-size: 25px;
+    background-color: #1e1f26;
+    color: #ffffff;
+    list-style: none;
+}
+
+.inputfield{
+    color: #dbdbdb;
+    padding: 15px 25px;
+    max-width: 500px;
+    max-height: 400px;
+    width: 400%;
+    font-size: 25px;
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+}   
+
+.suggestions {
+    max-width: 500px;
+    max-height: 200px;
+    cursor: pointer;
+    overflow: auto;
+}
+  
+.suggestions > div {
+    padding: 15px 25px;
+    border-bottom: 2px solid #2d2e36;
+    transition: all 0.1s ease;
+}
+  
+.suggestions > div:hover {
+    background-color: #dbdbdb !important;
+    color: #000000;
+}
+  
+.suggestions > div {
+    font-family: 'Arial';
+    font-size: 20px;
+    background-color: #1e1f26;
+    color: #ffffff;
+}

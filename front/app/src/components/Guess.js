@@ -1,6 +1,6 @@
 const Guess = ({ guess, answer}) => {
     return (
-      <li>{guess}{guess.toLowerCase() === answer.toLowerCase() ? '✅':'❌'}</li>
+      <li className="guess">{guess}{guess.toLowerCase() === answer.toLowerCase() ? '✅':'❌'}</li>
     )
   }
   
