@@ -1,0 +1,21 @@
+# .github/workflows/front.yml
+
+on:
+  push:
+    paths:
+      - 'front/**'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '21'
+        run: |
+          cd front/app
+          npm i
+          npm run build
+          npm run test

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Guess from './components/Guess'
+import GuessForm from './components/GuessForm'
 
 const App = () => {
-  
-  const [monkey, setMonkey] = useState('')
   const [guesses, setGuesses] = useState([])
-  const [newGuess, setNewGuess] = useState('')
+  const [monkey, setMonkey] = useState('')
   
   useEffect(() => {
     axios
@@ -17,32 +17,19 @@ const App = () => {
       })
   }, [])
 
-  const guess = (event) =>{
-    event.preventDefault()
+  const addGuess = (newGuess) =>{
     setGuesses(guesses.concat(newGuess))
-    setNewGuess('')
   }
-
-  const handleGuessChange = (event) => {
-    setNewGuess(event.target.value)
-  }
-
   
   return(
     <div>
       <h1>Definitely the app ever!</h1>
-
-      <div>
-        <form onSubmit={guess}>
-          <label for="fname">Who's that monkey ⁉️</label>
-          <input value={newGuess} onChange={handleGuessChange}></input>
-          <button type="submit">enter</button>
-        </form>
-      </div>
       
+      <GuessForm createGuess={addGuess}/>
+
       <ul>
           {guesses.map(guess =>
-            <p>{guess} {(guess.toLowerCase()===monkey.toLowerCase())?'✅':'❌'}</p>
+            <Guess key={guess} guess={guess} answer={monkey}/>
           )}
       </ul>
 
