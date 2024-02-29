@@ -14,7 +14,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '21'
-        run: |
+      - run: |
           cd front/app
           npm i
           npm run build
