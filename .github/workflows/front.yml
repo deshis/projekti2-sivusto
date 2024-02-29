@@ -9,9 +9,10 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Test and Deploy
         run: |
-          cd front
+          cd front/app
           npm i
           npm run build
           npm run test
