@@ -9,11 +9,7 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
-      - name: Test
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '21'
+      - name: Test and Deploy
       - run: |
           cd front/app
           npm i
