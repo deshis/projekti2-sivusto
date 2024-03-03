@@ -9,6 +9,7 @@ mongoose.connect(url)
     type: String,
     category: String,
     description: String,
+    image: String,
     upgrades: Array
 })
 
