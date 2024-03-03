@@ -34,6 +34,7 @@ test('random tower tier is between 0-5', async () => {
 
     expect(typeof response.body.type).toBe("string")
     expect(typeof response.body.category).toBe("string")
+    expect(typeof response.body.description).toBe("string")
     expect(Array.isArray(response.body.upgrades)).toBe(true)
   })
 
