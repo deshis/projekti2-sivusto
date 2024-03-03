@@ -1,4 +1,6 @@
 const towerRouter = require('express').Router()
+const Tower = require('../schemas/tower')
+
 const towers = [
     "Dart Monkey",
     "Boomerang Monkey",
@@ -29,7 +31,8 @@ towerRouter.get('/randomtower', async (req, res) => {
     let type = towers[Math.floor(Math.random() * towers.length)]
     let tier = Math.floor(Math.random() * 6);
     let path = Math.floor(Math.random() * 3)+1;
-    res.json({
+
+    res.status(200).json({
         "type":type,
         "tier":tier,
         "path":path
@@ -37,9 +40,19 @@ towerRouter.get('/randomtower', async (req, res) => {
 })
 
 towerRouter.get('/', async (req, res) => {
-    res.json({
+    res.status(200).json({
         "towers":towers
     })
+})
+
+towerRouter.get('/towerdata/:name', async (req, res) => {
+    const name = req.params.name
+    let towerData = await Tower.findOne({"type":name})
+    if(towerData){
+        res.status(200).json(towerData)
+    }else{
+        res.status(404).json({"error":"tower not found"})
+    }
 })
 
 module.exports = towerRouter
