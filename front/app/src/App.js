@@ -3,6 +3,8 @@ import axios from 'axios'
 import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
 
+const backURL = 'https://projekti2-sivusto.onrender.com/';
+
 const App = () => {
   const [guesses, setGuesses] = useState([])
   const [monkey, setMonkey] = useState('')
