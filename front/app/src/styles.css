@@ -8,6 +8,12 @@ h1{
     font-size: 250%;
 }
 
+label{
+    color: #dbdbdb;
+    font-family: "Arial";
+    font-size: 30px;
+}
+
 .guess{
     font-family: 'Arial';
     font-size: 25px;
@@ -42,6 +48,14 @@ h1{
 .guessform > button:hover {
     background-color: #dbdbdb !important;
     color: #000000;
+}
+
+.slider {
+    display:block;
+    color: #dbdbdb;
+    font-family: Arial;
+    font-size: 25px;
+    padding: 10px;
 }
 
 .suggestions {

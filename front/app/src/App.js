@@ -37,11 +37,11 @@ const App = () => {
       return;
     }
     var success = monkeys.some(function(element) {
-      console.log(newGuess);
       if (newGuess[0].toLowerCase() === element[0].toLowerCase()) {
           setGuesses(guesses.concat(newGuess));  
           return true;
       }
+      return false;
     });
     if(!success) alert('Add an acceptable monkey!');
   }
@@ -52,9 +52,9 @@ const App = () => {
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
 
-        {guesses.map(guess =>
-          <Guess key={guess} guess={guess} answer={monkey}/>
-        )}
+      {guesses.map(guess =>
+        <Guess key={guess} guess={guess} answer={monkey}/>
+      )}
 
     </div>
   )
