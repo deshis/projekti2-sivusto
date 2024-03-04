@@ -17,10 +17,17 @@ const GuessForm = ({ createGuess, options }) => {
         event.preventDefault()
         createGuess(newGuess);
         setNewGuess('')
+        setSuggestions([]);
     }
 
     const handler = input => {
-        setSuggestions(options.filter(i => i.toString().toLowerCase().startsWith(input.target.value.toLowerCase())));
+        const isOption = options.some(function(element){
+            if(element.toString().toLowerCase() === input.target.value.toLowerCase())
+                return true;
+        });
+        if(isOption) return;
+
+        setSuggestions(options.filter(i => i.toString().toLowerCase().includes(input.target.value.toLowerCase())));
       };
     
       const handleChange = i => {
@@ -39,7 +46,6 @@ const GuessForm = ({ createGuess, options }) => {
 
         if(key.keyCode === 13){
             key.preventDefault();
-            console.log(suggestions)
             if(suggestions.length > 0){
                 setNewGuess(suggestions[selectedSuggestion]);
                 setSelectedSuggestion(0);

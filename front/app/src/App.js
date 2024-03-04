@@ -32,7 +32,18 @@ const App = () => {
   }, [])
 
   const addGuess = (newGuess) =>{
-    setGuesses(guesses.concat(newGuess))
+    if(newGuess === '') {
+      alert('Your input is empty!');
+      return;
+    }
+    var success = monkeys.some(function(element) {
+      console.log(newGuess);
+      if (newGuess[0].toLowerCase() === element[0].toLowerCase()) {
+          setGuesses(guesses.concat(newGuess));  
+          return true;
+      }
+    });
+    if(!success) alert('Add an acceptable monkey!');
   }
   
   return(

@@ -58,5 +58,5 @@ test('GuessForm updates autocomplete correctly', async () => {
     
     await user.type(input, 'bo');
     expect(screen.getByText('Boomerang Monkey')).toBeInTheDocument();
-    expect(screen.getByText('Boomerang Monkey')).toBeInTheDocument();
+    expect(screen.getByText('Bomb Shooter')).toBeInTheDocument();
 })
