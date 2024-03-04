@@ -2,13 +2,6 @@ body{
     background-color: #1e1f26;
 }
 
-label{
-    color: #dbdbdb;
-    font-family: "Arial";
-    font-size: 150%;
-    margin: 25px;
-}
-
 h1{
     color: #dbdbdb;
     font-family: "Arial";
@@ -20,25 +13,43 @@ h1{
     font-size: 25px;
     background-color: #1e1f26;
     color: #ffffff;
-    list-style: none;
 }
 
-.inputfield{
+.guessform{
+    width: 100%;
+}
+
+.guessform > input{
+    text-align:center;
     color: #dbdbdb;
     padding: 15px 25px;
-    max-width: 500px;
     max-height: 400px;
-    width: 400%;
     font-size: 25px;
     border: 2px solid #2d2e36;
     background-color: #1e1f26;
 }   
 
+.guessform > button{
+    vertical-align: center;
+    text-align: center;
+    color: #dbdbdb;
+    font-size: 25px;
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+    margin-top: 25px;
+}
+
+.guessform > button:hover {
+    background-color: #dbdbdb !important;
+    color: #000000;
+}
+
 .suggestions {
-    max-width: 500px;
     max-height: 200px;
+    width: 55%;
     cursor: pointer;
     overflow: auto;
+    margin: auto;
 }
   
 .suggestions > div {
@@ -57,4 +68,9 @@ h1{
     font-size: 20px;
     background-color: #1e1f26;
     color: #ffffff;
+}
+
+.active {
+    background-color: #dbdbdb !important;
+    color: #000000;
 }

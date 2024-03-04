@@ -3,8 +3,6 @@ import axios from 'axios'
 import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
 
-const backURL = "https://projekti2-sivusto.onrender.com"
-
 const App = () => {
   const [guesses, setGuesses] = useState([])
   const [monkey, setMonkey] = useState('')
@@ -36,16 +34,14 @@ const App = () => {
   }
   
   return(
-    <div>
+    <div style={{margin:'auto', width: '50%', textAlign:'center'}}>
       <h1>Definitely the app ever!</h1>
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
 
-      <ul>
-          {guesses.map(guess =>
-            <Guess key={guess} guess={guess} answer={monkey}/>
-          )}
-      </ul>
+        {guesses.map(guess =>
+          <Guess key={guess} guess={guess} answer={monkey}/>
+        )}
 
     </div>
   )
