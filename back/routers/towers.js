@@ -29,13 +29,27 @@ const towers = [
 
 towerRouter.get('/randomtower', async (req, res) => {
     let type = towers[Math.floor(Math.random() * towers.length)]
-    let tier = Math.floor(Math.random() * 6);
-    let path = Math.floor(Math.random() * 3)+1;
+
+    let mainPath = Math.floor(Math.random() * 3)
+    let crossPath = Math.floor(Math.random() * 3)
+    let mainPathTier = Math.floor(Math.random() * 6)
+    let crossPathTier = Math.floor(Math.random() * 3)
+
+    
+    if(crossPath === mainPath){
+        crossPathTier = 0 
+    }else if (crossPathTier > mainPathTier){
+        crossPathTier = mainPathTier
+    }
+
+    let upgrades = [0,0,0]
+    
+    upgrades[crossPath]=crossPathTier
+    upgrades[mainPath]=mainPathTier
 
     res.status(200).json({
         "type":type,
-        "tier":tier,
-        "path":path
+        "upgrades":upgrades
     })
 })
 

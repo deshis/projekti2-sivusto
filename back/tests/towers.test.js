@@ -3,16 +3,11 @@ const app = require('../app')
 
 const api = supertest(app)
 
-test('random tower tier is between 0-5', async () => {
+test('random tower upgrades is array of numbers', async () => {
     const response = await api.get('/api/towers/randomtower')
-    expect(response.body.tier).toBeGreaterThanOrEqual(0)
-    expect(response.body.tier).toBeLessThanOrEqual(5)
-  })
-
-  test('random tower path is between 1-3', async () => {
-    const response = await api.get('/api/towers/randomtower')
-    expect(response.body.path).toBeGreaterThanOrEqual(1)
-    expect(response.body.path).toBeLessThanOrEqual(3)
+    const upgradeArray = response.body.upgrades
+    expect(Array.isArray(upgradeArray)).toBe(true)
+    expect(upgradeArray.every(i => typeof i === "number")).toBe(true)
   })
 
   test('random tower type is string', async () => {
@@ -28,6 +23,9 @@ test('random tower tier is between 0-5', async () => {
     expect(towerArray.every(i => typeof i === "string")).toBe(true)
   })
 
+
+
+  
   test('getting towerdata works with valid request', async () => {
     const response = await api.get('/api/towers/towerdata/Dart Monkey')
     .expect(200)
