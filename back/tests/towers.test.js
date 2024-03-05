@@ -57,4 +57,10 @@ test('random tower upgrades is array of numbers', async () => {
 
     await api.get('/api/towers/towerprice/Banana Farm/["notanumber",2,0]')
     .expect(400)
+
+    await api.get('/api/towers/towerprice/Banana Farm/[6,0,0]')
+    .expect(400)
+
+    await api.get('/api/towers/towerprice/Banana Farm/[-1,0,0]')
+    .expect(400)
   })
