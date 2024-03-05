@@ -24,8 +24,6 @@ test('random tower upgrades is array of numbers', async () => {
   })
 
 
-
-  
   test('getting towerdata works with valid request', async () => {
     const response = await api.get('/api/towers/towerdata/Dart Monkey')
     .expect(200)
@@ -40,4 +38,23 @@ test('random tower upgrades is array of numbers', async () => {
   test('getting towerdata fails with invalid request', async () => {
     await api.get('/api/towers/towerdata/asdasdasd')
     .expect(404)
+  })
+
+  test('calculating tower price works with valid request', async () => {
+    const response = await api.get('/api/towers/towerprice/Banana Farm/[5,2,0]')
+    .expect(200)
+
+    expect(typeof response.body.cost).toBe("number")
+    expect(response.body.cost).toBe(125450)
+  })
+
+  test('calculating tower price fails with invalid request', async () => {
+    await api.get('/api/towers/towerprice/thistowerdoesntexist/[5,2,0]')
+    .expect(404)
+
+    await api.get('/api/towers/towerprice/Banana Farm/notalist')
+    .expect(400)
+
+    await api.get('/api/towers/towerprice/Banana Farm/["notanumber",2,0]')
+    .expect(400)
   })
