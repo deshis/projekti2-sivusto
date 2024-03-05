@@ -69,4 +69,41 @@ towerRouter.get('/towerdata/:name', async (req, res) => {
     }
 })
 
+
+towerRouter.get('/towerprice/:name/:upgrades', async (req, res) => {
+    const name = req.params.name
+
+    let upgradesToCalculate
+
+    try{
+        upgradesToCalculate = JSON.parse(req.params.upgrades)
+    }catch{
+        return res.status(400).json({"error":"failed to parse upgrade array"})
+    }
+
+    let towerData = await Tower.findOne({"type":name})
+
+    if(!(Array.isArray(upgradesToCalculate)&&upgradesToCalculate.every(i => typeof i === "number"))){
+        return res.status(400).json({"error":"upgrades is not array of numbers"})
+    }
+    if(upgradesToCalculate.some(i => i>5||i<0)){
+        return res.status(400).json({"error":"upgrade tier invalid"})
+    }
+
+    if(!towerData){
+        res.status(404).json({"error":"tower not found"})
+    }
+    else{
+        const upgrades = towerData.upgrades
+        let totalPrice = towerData.cost
+        for(let i=0; i<3;i++){
+            for(let j=0; j<upgradesToCalculate[i];j++){
+                totalPrice+=upgrades[i][j].cost
+            }
+        }
+        res.status(200).json({"cost":totalPrice})
+    }
+})
+
+
 module.exports = towerRouter
