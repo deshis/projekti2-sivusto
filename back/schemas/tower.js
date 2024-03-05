@@ -8,6 +8,7 @@ mongoose.connect(url)
   const towerSchema = new mongoose.Schema({
     type: String,
     category: String,
+    cost: Number,
     description: String,
     image: String,
     upgrades: Array
