@@ -13,7 +13,7 @@ const Guess = ({ guess, answer}) => {
     Towers.getTowerData(guess.monkey).then(data =>{
       const category = data.category;
       Towers.getTowerData(answer.type).then(data =>{
-        type.current.innerText = data.category === guess.monkey ? "✔️" : "❌";
+        type.current.innerText = data.type === guess.monkey ? "✔️" : "❌";
         categoryRef.current.innerText = data.category === category ? "✔️" : "❌";
         topRef.current.innerText = answer.upgrades[0] === guess.paths[0] ? "✔️" : answer.upgrades[0] > guess.paths[0] ? "⏫" : "⏬";
         midRef.current.innerText = answer.upgrades[1] === guess.paths[1] ? "✔️" : answer.upgrades[1] > guess.paths[1] ? "⏫" : "⏬";
