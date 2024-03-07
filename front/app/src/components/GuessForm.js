@@ -18,7 +18,7 @@ const GuessForm = ({ createGuess, options }) => {
 
     const guess = (event) =>{
         event.preventDefault()
-        createGuess(newGuess);
+        createGuess({monkey: newGuess, paths: [parseInt(topPath), parseInt(midPath), parseInt(botPath)]});
         setNewGuess('')
         setSuggestions([]);
     }

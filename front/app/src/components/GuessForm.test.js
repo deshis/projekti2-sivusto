@@ -17,7 +17,7 @@ test('GuessForm updates parent state and calls on submit', async () => {
     await user.click(sendButton)
   
     expect(createGuess.mock.calls).toHaveLength(1)
-    expect(createGuess.mock.calls[0][0]).toBe('monkey?')
+    expect(createGuess.mock.calls[0][0].monkey).toBe('monkey?')
     
 })
 

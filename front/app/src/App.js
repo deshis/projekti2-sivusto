@@ -1,43 +1,36 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
-
-const backURL = 'https://projekti2-sivusto.onrender.com';
+import Towers from './services/Towers'
 
 const App = () => {
   const [guesses, setGuesses] = useState([])
-  const [monkey, setMonkey] = useState('')
+  const [monkey, setMonkey] = useState(null)
   const [monkeys, setMonkeys] = useState([])
   
   useEffect(() => {
-    axios
-      .get(backURL+"/api/towers/randomtower")
-      .then(response => {
+    Towers.getRandomTower().then(tower => {
         console.log('promise fulfilled')
-        console.log(response.data.type)
-        setMonkey(response.data.type)      
+        console.log(tower.type)
+        console.log(tower.upgrades)
+        setMonkey(tower)
       })
   }, [])
 
   useEffect(() => {
-    axios
-      .get(backURL+"/api/towers")
-      .then(response => {
-        const result = [];
-        for(var monke in response.data.towers)
-          result.push([response.data.towers[monke]]);
-        setMonkeys(result)
-      })
+    Towers.getTowerArray().then(towers => {
+      setMonkeys(towers)
+    });
   }, [])
 
   const addGuess = (newGuess) =>{
-    if(newGuess === '') {
+    console.log(newGuess);
+    if(newGuess.monkey === undefined) {
       alert('Your input is empty!');
       return;
     }
     var success = monkeys.some(function(element) {
-      if (newGuess[0].toLowerCase() === element[0].toLowerCase()) {
+      if (newGuess.monkey.toLowerCase() === element.toLowerCase()) {
           setGuesses(guesses.concat(newGuess));  
           return true;
       }
@@ -51,6 +44,17 @@ const App = () => {
       <h1>Definitely the app ever!</h1>
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
+
+      <div className="row guess">
+        
+        <div className="column" >type</div> 
+        <div className="column" >category</div>
+        <div className="column" >top</div>
+        <div className="column" >mid</div>
+        <div className="column" >bot</div>
+        <div className="column" >cost</div>
+
+      </div>
 
       {guesses.map(guess =>
         <Guess key={guess} guess={guess} answer={monkey}/>

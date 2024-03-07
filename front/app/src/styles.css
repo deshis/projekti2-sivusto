@@ -14,11 +14,36 @@ label{
     font-size: 30px;
 }
 
+.row {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex: 1;
+    transition: all 0.8s;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+    min-width: 100px;
+    max-width: 100px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+
+
 .guess{
     font-family: 'Arial';
     font-size: 25px;
     background-color: #1e1f26;
     color: #ffffff;
+    border: 2px solid #2d2e36;
+    width: 100%;
 }
 
 .guessform{
