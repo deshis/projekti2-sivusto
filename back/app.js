@@ -14,6 +14,9 @@ app.use("/api/signup", signupRouter)
 app.use("/api/login", loginRouter)
 app.use("/api/scores", scoreRouter)
 
+
+app.use('/images', express.static('images'))
+
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
 }
