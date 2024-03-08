@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import Towers from '../services/Towers'
 
 const GuessForm = ({ createGuess, options }) => {
     const [newGuess, setNewGuess] = useState('')
@@ -10,24 +11,36 @@ const GuessForm = ({ createGuess, options }) => {
     const [botPath, setBotPath] = useState(0);
 
     const selectedRef = useRef(null); 
+    const imageRef = useRef(null);
 
     useEffect(() => {
         if(selectedRef.current != null) 
             selectedRef.current.scrollIntoView({ behavior: 'smooth' });
     });
 
+    const setImage = () =>{
+        if(newGuess)imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
+        else imageRef.current.src = Towers.getDefaultTowerImage();
+    }
+
+    useEffect(setImage, [topPath]);
+    useEffect(setImage, [midPath]);
+    useEffect(setImage, [botPath]);
+
     const guess = (event) =>{
         event.preventDefault()
         createGuess({monkey: newGuess, paths: [parseInt(topPath), parseInt(midPath), parseInt(botPath)]});
         setNewGuess('')
         setSuggestions([]);
+        setImage();
     }
 
     const handler = input => {
         const isOption = options.some(function(element){
-            if(element.toString().toLowerCase() === input.target.value.toLowerCase())
+            if(element.toString().toLowerCase() === input.target.value.toLowerCase()){
+                imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
                 return true;
-            return false;
+            }return false;
         });
         if(isOption) return;
 
@@ -71,7 +84,6 @@ const GuessForm = ({ createGuess, options }) => {
         else return true;
     }
 
-
     return (
         <div>
             <form onSubmit={guess} className='guessform'>
@@ -99,23 +111,29 @@ const GuessForm = ({ createGuess, options }) => {
                     </div>
                     ))}
                 </div>
-                <br/>
-                <label>Paths:</label>
-                <br/>
-                <div className='slider'>
-                    <label>{topPath}</label>
-                    <input type="range" value={topPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, topPath, [midPath, botPath]) ? setTopPath(e.target.value) : null}/>
+                <div>
+                    <div className='Upgrades'>
+                        <br/>
+                        <label>Upgrade Paths:</label>
+                        <br/>
+                        <div className='slider'>
+                            <label>{topPath}</label>
+                            <input type="range" value={topPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, topPath, [midPath, botPath]) ? setTopPath(e.target.value) : null}/>
+                        </div>
+                        <div className='slider'>
+                            <label>{midPath}</label>
+                            <input type="range" value={midPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, midPath, [topPath, botPath]) ? setMidPath(e.target.value) : null}/>
+                        </div>
+                        <div className='slider'>
+                            <label>{botPath}</label>
+                            <input type="range" value={botPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, botPath, [topPath, midPath]) ? setBotPath(e.target.value) : null}/>
+                        </div>
+                        <br/>
+                    </div>
+                    <div className='TowerImage'>
+                        <img src={Towers.getDefaultTowerImage()} alt="monkey" onError={(e) => console.log(e.error)} ref={imageRef}/>
+                    </div>
                 </div>
-                <div className='slider'>
-                    <label>{midPath}</label>
-                    <input type="range" value={midPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, midPath, [topPath, botPath]) ? setMidPath(e.target.value) : null}/>
-                </div>
-                <div className='slider'>
-                    <label>{botPath}</label>
-                    <input type="range" value={botPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, botPath, [topPath, midPath]) ? setBotPath(e.target.value) : null}/>
-                </div>
-                
-                <br/>
 
                 <button type="submit">submit</button>
             </form>

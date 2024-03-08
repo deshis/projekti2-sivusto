@@ -44,8 +44,8 @@ const App = () => {
       <h1>Definitely the app ever!</h1>
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
-
-      <div className="row guess">
+      <br/>
+      <div className="row">
         
         <div className="column" >type</div> 
         <div className="column" >category</div>
@@ -55,7 +55,6 @@ const App = () => {
         <div className="column" >cost</div>
 
       </div>
-
       {guesses.map(guess =>
         <Guess key={guess} guess={guess} answer={monkey}/>
       )}

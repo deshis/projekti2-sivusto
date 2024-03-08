@@ -21,11 +21,35 @@ const getTowerTotalCost = (tower, upgrades) => {
     return request.then(response => response.data.cost);
 }
 
+const getDefaultTowerImage = () => {
+    return baseURL+"/images/default-monke.png";
+}
+
+const getTowerImage = (tower, upgrades) => {
+    upgrades = upgrades.map((u) => parseInt(u));
+    let largest = 0;
+    let i = 0;
+    for(var u in upgrades){
+        if(largest<upgrades[u]){
+            largest=upgrades[u];
+            i = u;
+        }
+    }
+    
+    for(var index in upgrades){
+        if(index !== i) upgrades[index] = 0;
+    }
+
+    return `${baseURL}/images/${tower}/${upgrades.join("")}-${tower.replace(" ", '')}.png`
+}
+
 const exportedObject = {
     getTowerArray, 
     getRandomTower, 
     getTowerData,
     getTowerTotalCost,
+    getDefaultTowerImage,
+    getTowerImage,
 }
 
 export default exportedObject

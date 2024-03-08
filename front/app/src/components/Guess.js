@@ -30,9 +30,9 @@ const Guess = ({ guess, answer}) => {
   
   return (
       
-    <div>
-      <label>{guess.monkey}</label>
-      <div className="row guess">
+    <div className="guessEntry">
+      <label>{guess.monkey} {guess.paths.join('-')}</label>
+      <div className="row">
   
         <div className="column" ref={type}></div> 
         <div className="column" ref={categoryRef}></div>
