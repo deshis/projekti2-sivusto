@@ -20,15 +20,15 @@ img{
     width: auto;
 }
 
-.loginButton {
+button {
     color: #dbdbdb;
     font: 25px "Arial";
     border: 2px solid #2d2e36;
     background-color: #1e1f26;
-    margin-top: 25px;
+    margin: 25px;
 }
 
-.loginButton:hover{
+button:hover{
     background-color: #dbdbdb !important;
     color: #000000;
 }

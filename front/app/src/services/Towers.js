@@ -54,7 +54,7 @@ const getLargestUpgrade = (upgrades) => {
         }
     }
     
-    return {path: parseInt(i), tier: parseInt(largest)-1 > 0 ? parseInt(largest)-1 : 0};
+    return {path: parseInt(i), tier: parseInt(largest)-1};
 }
 
 const exportedObject = {
