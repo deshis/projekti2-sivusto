@@ -3,14 +3,17 @@ import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
 import Overlay from './components/Overlay'
 import Towers from './services/Towers'
+import Login from './components/Login'
 
 const App = () => {
   const [guesses, setGuesses] = useState([]);
   const [monkey, setMonkey] = useState(null);
   const [monkeyData, setMonkeyData] = useState(null);
   const [monkeys, setMonkeys] = useState([]);
-  const [isOverlay, setIsOverlay] = useState(false);
+  const [isResultOverlay, setIsResultOverlay] = useState(false);
   const [mainPath, setMainPath] = useState(null)
+  const [isLoginForm, setIsLoginForm] = useState(false);
+  const [user, setUser] = useState(null);
   
   useEffect(() => {
     if(!monkey){
@@ -32,7 +35,7 @@ const App = () => {
   }, [])
 
   const handleRestart = () =>{
-    setIsOverlay(false);
+    setIsResultOverlay(false);
     setMonkey(null);
     setGuesses([]);
   }
@@ -52,13 +55,23 @@ const App = () => {
     });
     if(!success) alert('Add an acceptable monkey!');
     else if(monkey.upgrades.toString() === newGuess.paths.toString() && monkey.type === newGuess.monkey){
-      setIsOverlay(true);
+      setIsResultOverlay(true);
     }
   }
   
   return(
     <div style={{margin:'auto', width: '50%', textAlign:'center'}}>
       <h1>Definitely the app ever!</h1>
+      
+      {user ? (<div><p style={{color:"white"}}>logged in as:</p> <label>{user.username}</label></div>) : null}
+      {!user ? (
+        <button className='loginButton' onClick={()=>setIsLoginForm(!isLoginForm)}>Login?</button>
+      ): null}
+      {(isLoginForm && !user) ? (
+        <Overlay isOpen={isLoginForm} close={() => setIsLoginForm(false)} >
+          <Login setUser={setUser}/>
+        </Overlay>
+      ): null}
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
       <br/>
@@ -76,7 +89,7 @@ const App = () => {
         <Guess key={i} guess={guess} answer={monkey} index={i}/>
       )}
 
-      <Overlay isOpen={isOverlay} close={() => setIsOverlay(false)}>
+      <Overlay isOpen={isResultOverlay} close={() => setIsResultOverlay(false)}>
           {monkey && monkeyData && mainPath ? ( 
           <div>
             <div className='overlayText'>

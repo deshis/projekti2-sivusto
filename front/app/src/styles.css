@@ -20,6 +20,52 @@ img{
     width: auto;
 }
 
+.loginButton {
+    color: #dbdbdb;
+    font: 25px "Arial";
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+    margin-top: 25px;
+}
+
+.loginButton:hover{
+    background-color: #dbdbdb !important;
+    color: #000000;
+}
+
+.loginForm{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loginForm > label {
+    flex: 1;
+}
+
+.loginForm > button {
+    color: #dbdbdb;
+    font: 25px "Arial";
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+    margin-top: 25px;
+}
+
+.loginForm > button:hover {
+    background-color: #dbdbdb !important;
+    color: #000000;
+}
+
+.loginForm > input{
+    text-align:center;
+    color: #dbdbdb;
+    padding: 15px 25px;
+    max-height: 400px;
+    font-size: 25px;
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+}   
+
 .overlayBG {
     background-color: rgba(17, 17, 17, 0.699);
     width: 100%;
@@ -30,7 +76,7 @@ img{
     cursor: pointer;
     z-index: 9;
   }
-  
+
   .overlayContainer{
     border: 10px solid #85868d;
     background-color: #bd8216;
@@ -44,9 +90,6 @@ img{
     padding: 30px;
     width: fit-content;
     height: fit-content;
-    color: #dbdbdb;
-    font: bold 35px "Arial" ;
-    -webkit-text-stroke: #000000 0.75px;
   }
 
   .overlayText{
@@ -54,6 +97,9 @@ img{
     min-width: 300px;
     max-width: 500px;
     padding-top: 25px;
+    color: #dbdbdb;
+    font: bold 35px "Arial" ;
+    -webkit-text-stroke: #000000 0.75px;
   }
 
   .overlayImage{
