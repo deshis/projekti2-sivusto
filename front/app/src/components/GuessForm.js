@@ -18,27 +18,22 @@ const GuessForm = ({ createGuess, options }) => {
             selectedRef.current.scrollIntoView({ behavior: 'smooth' });
     });
 
-    const setImage = () =>{
-        if(newGuess)imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
+    useEffect(()=>{
+        if(options.indexOf(newGuess) > -1) imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
         else imageRef.current.src = Towers.getDefaultTowerImage();
-    }
-
-    useEffect(setImage, [topPath]);
-    useEffect(setImage, [midPath]);
-    useEffect(setImage, [botPath]);
+    }, [topPath, midPath, botPath, newGuess, options]);
 
     const guess = (event) =>{
         event.preventDefault()
         createGuess({monkey: newGuess, paths: [parseInt(topPath), parseInt(midPath), parseInt(botPath)]});
         setNewGuess('')
         setSuggestions([]);
-        setImage();
+        imageRef.current.src = Towers.getDefaultTowerImage();
     }
 
     const handler = input => {
         const isOption = options.some(function(element){
             if(element.toString().toLowerCase() === input.target.value.toLowerCase()){
-                imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
                 return true;
             }return false;
         });
@@ -72,7 +67,7 @@ const GuessForm = ({ createGuess, options }) => {
 
         if(key.keyCode === 38 && selectedSuggestion > 0 && suggestions.length > 0){
             setSelectedSuggestion(selectedSuggestion-1);
-        }else if(key.keyCode === 40 && selectedSuggestion < options.length-1 && suggestions.length > 0){
+        }else if(key.keyCode === 40 && selectedSuggestion < suggestions.length-1 && suggestions.length > 0){
             setSelectedSuggestion(selectedSuggestion+1);
         }
     }

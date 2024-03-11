@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import Towers from "../services/Towers"
 
-const Guess = ({ guess, answer}) => {
+const Guess = ({ guess, answer, index}) => {
   const type = useRef(null);
   const categoryRef = useRef(null); 
   const costRef = useRef(null);
@@ -30,16 +30,16 @@ const Guess = ({ guess, answer}) => {
   
   return (
       
-    <div className="guessEntry">
+    <div className="guessEntry" key={index}>
       <label>{guess.monkey} {guess.paths.join('-')}</label>
       <div className="row">
   
-        <div className="column" ref={type}></div> 
-        <div className="column" ref={categoryRef}></div>
-        <div className="column" ref={topRef}></div>
-        <div className="column" ref={midRef}></div>
-        <div className="column" ref={botRef}></div>
-        <div className="column" ref={costRef}></div>
+        <div key="type" className="column" ref={type}></div> 
+        <div key="category" className="column" ref={categoryRef}></div>
+        <div key="top" className="column" ref={topRef}></div>
+        <div key="middle" className="column" ref={midRef}></div>
+        <div key="bottom" className="column" ref={botRef}></div>
+        <div key="cost" className="column" ref={costRef}></div>
 
       </div>
     </div>
