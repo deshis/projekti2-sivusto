@@ -6,8 +6,15 @@ const login = (username, password) => {
     return request.then(response => response.data);
 }
 
+const signUp = (username, password) => {
+    console.log(({username, password}));
+    const request = axios.post(baseURL+"/api/signup", {username, password});
+    return request.then(response => response.data);
+}
+
 const exported = {
     login,
+    signUp,
 }
 
 export default exported;
