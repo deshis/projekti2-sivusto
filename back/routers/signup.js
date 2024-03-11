@@ -9,7 +9,14 @@ signupRouter.post('/', async (req, res) => {
     username = req.body.username
     password = req.body.password
     const saltRounds = 10
-    const passwordHash = await bcrypt.hash(password, saltRounds)
+    let passwordHash
+
+    try {
+        passwordHash = await bcrypt.hash(password, saltRounds) 
+    } catch{
+        return res.status(400).json({"error":"bcrypt error"})
+    }
+
 
     if((await User.find({ username: username})).length>0){
         res.status(400)
