@@ -43,6 +43,20 @@ const getTowerImage = (tower, upgrades) => {
     return `${baseURL}/images/${tower}/${upgrades.join("")}-${tower.replace(" ", '')}.png`
 }
 
+const getLargestUpgrade = (upgrades) => {
+    upgrades = upgrades.map((u) => parseInt(u));
+    let largest = 0;
+    let i = 0;
+    for(var u in upgrades){
+        if(largest<upgrades[u]){
+            largest=upgrades[u];
+            i = u;
+        }
+    }
+    
+    return {path: parseInt(i), tier: parseInt(largest)-1};
+}
+
 const exportedObject = {
     getTowerArray, 
     getRandomTower, 
@@ -50,6 +64,7 @@ const exportedObject = {
     getTowerTotalCost,
     getDefaultTowerImage,
     getTowerImage,
+    getLargestUpgrade,
 }
 
 export default exportedObject
