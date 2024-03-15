@@ -22,5 +22,4 @@ jobs:
         env:
           deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          npm run build
           curl "$deploy_url"
