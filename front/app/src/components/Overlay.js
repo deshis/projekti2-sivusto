@@ -1,10 +1,6 @@
-
-//import Towers from "../services/Towers"
-
 const Overlay = ({isOpen, close, children}) => {
   
-    return (
-      
+    return (      
     <div>
         {
             isOpen ? (

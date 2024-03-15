@@ -1,5 +1,5 @@
 import Users from '../services/Users';
-import { useState, useRef} from 'react';
+import { useState } from 'react';
 
 const Login = ({ setUser }) => {
     const [username, setUsername] = useState('');
@@ -12,6 +12,10 @@ const Login = ({ setUser }) => {
         event.preventDefault();
         Users.login(username, password).then((data) => {
             setUser(data);
+            Users.setToken(data.token);
+            window.localStorage.setItem(
+                'loggedUser', JSON.stringify(data)
+            )
         }).catch(error => alert(error.message));
     }
 
@@ -24,6 +28,10 @@ const Login = ({ setUser }) => {
             Users.signUp(username, password).then((data) => {
                 Users.login(username, password).then((data) => {
                     setUser(data);
+                    Users.setToken(data.token);
+                    window.localStorage.setItem(
+                        'loggedUser', JSON.stringify(data)
+                    )
                 }).catch(error => alert(error.message));
             }).catch(error => alert(error.message));
         }

@@ -3,6 +3,7 @@ import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
 import Overlay from './components/Overlay'
 import Towers from './services/Towers'
+import Users from './services/Users'
 import Login from './components/Login'
 
 const App = () => {
@@ -15,7 +16,20 @@ const App = () => {
   const [isLoginForm, setIsLoginForm] = useState(false);
   const [user, setUser] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const [scoreSaved, setScoreSaved] = useState(false);
   
+  //User stays logged in even when page refreshes
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser');
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      if(!user) return;
+      setUser(user);
+      Users.setToken(user.token);
+    }
+  }, [setUser])
+
+
   useEffect(() => {
     if(!monkey){
       Towers.getRandomTower().then(tower => {
@@ -35,11 +49,23 @@ const App = () => {
     });
   }, [])
 
+  const handleLogOut = () =>{
+    setUser(null);
+    setIsLoginForm(false);
+    window.localStorage.removeItem('loggedUser')
+  }
+
   const handleRestart = () =>{
     setIsResultOverlay(false);
     setMonkey(null);
     setGuesses([]);
     setGameOver(false);
+    setScoreSaved(false);
+  }
+
+  const saveScore = () =>{
+    Users.postScore({guesses: guesses.length, tower: monkey, time: Date.now()});
+    setScoreSaved(true);
   }
 
   const addGuess = (newGuess) =>{
@@ -66,10 +92,16 @@ const App = () => {
     <div style={{margin:'auto', width: '50%', textAlign:'center'}}>
       <h1>Definitely the app ever!</h1>
       
-      {user ? (<div><p style={{color:"white"}}>logged in as:</p> <label>{user.username}</label></div>) : null}
-      {!user ? (
+      {user ? (
+      <div>
+        <p style={{color:"white"}}>logged in as:</p>
+        <label>{user.username}</label><br/>
+        <button onClick={handleLogOut}>log out</button>
+      </div>
+      ) : (
         <button className='loginButton' onClick={()=>setIsLoginForm(!isLoginForm)}>Login?</button>
-      ): null}
+      )}
+      
       {(isLoginForm && !user) ? (
         <Overlay isOpen={isLoginForm} close={() => setIsLoginForm(false)} >
           <Login setUser={setUser}/>
@@ -111,6 +143,7 @@ const App = () => {
             </div>
             <br/>
             Total guesses: {guesses.length} <br/>
+            {!scoreSaved ? <button onClick={saveScore}>save score</button> : <><br/>score saved as {user.username}<br/></> }
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
           }
