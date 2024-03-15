@@ -14,7 +14,12 @@ scoreRouter.post('/', async (req, res) => {
     }
     
     const user = await User.findById(decodedToken.id)  
-    user.scores.push(req.body.score)
+
+    if(user == null){
+        return res.status(404).json({error: "user not found"})
+    }
+
+    user.scores.push(req.body)
     await user.save()
 
     res.status(201)
@@ -30,6 +35,10 @@ scoreRouter.get('/', async (req, res) => {
     }
 
     const user = await User.findById(decodedToken.id)  
+
+    if(user == null){
+        return res.status(404).json({error: "user not found"})
+    }
 
     res.status(200)
     res.json({"scores": user.scores})

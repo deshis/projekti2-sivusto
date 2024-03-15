@@ -46,7 +46,7 @@ test('adding a new score with valid token works', async () => {
         .send({"score":5})
         .expect(201)
 
-    expect(response.body.scores).toContainEqual(5)
+    expect(response.body.scores).toContainEqual({"score":5})
   })
 
 
