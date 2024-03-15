@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, getByText, render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Login from './Login'
 import userEvent from '@testing-library/user-event'

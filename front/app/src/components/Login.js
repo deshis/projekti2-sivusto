@@ -23,7 +23,6 @@ const Login = ({ setUser }) => {
         event.preventDefault();
         if(password !== confirmPassword){
             setNotif(true);
-            setTimeout(()=>{setNotif(false)}, 10000);
         }else{
             Users.signUp(username, password).then((data) => {
                 Users.login(username, password).then((data) => {

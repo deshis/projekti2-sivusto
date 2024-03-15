@@ -1,5 +1,5 @@
 import React from 'react'
-import { fireEvent, getByText, render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import GuessForm from './GuessForm'
 import userEvent from '@testing-library/user-event'

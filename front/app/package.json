@@ -3,14 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/react": "^14.2.1",
-    "@testing-library/user-event": "^14.5.2",
+    "@babel/preset-react": "^7.23.3",
+    "@testing-library/jest-dom": "^5.17.0",
     "axios": "^1.6.7",
-    "instead": "^1.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-native": "^0.73.6",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -38,6 +36,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@babel/plugin-transform-async-generator-functions": "^7.23.9",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/user-event": "^14.5.2"
   }
 }
