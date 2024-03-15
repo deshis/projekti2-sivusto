@@ -22,9 +22,6 @@ scoreRouter.post('/', async (req, res) => {
     user.scores.push(req.body)
     await user.save()
 
-    console.log(req.body)
-    console.log(user.scores)
-
     res.status(201)
     res.json({"scores": user.scores})
 })
