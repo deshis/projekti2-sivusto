@@ -5,6 +5,7 @@ const towerRouter = require('./routers/towers')
 const signupRouter = require('./routers/signup')
 const loginRouter = require('./routers/login')
 const scoreRouter = require('./routers/scores')
+const dailyRouter = require('./routers/daily')
 const path = require('path');
 
 app.use(cors())
@@ -18,6 +19,7 @@ app.use("/api/towers", towerRouter)
 app.use("/api/signup", signupRouter)
 app.use("/api/login", loginRouter)
 app.use("/api/scores", scoreRouter)
+app.use("/api/daily", dailyRouter)
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })

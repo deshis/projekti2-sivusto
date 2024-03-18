@@ -33,7 +33,8 @@ signupRouter.post('/', async (req, res) => {
     else {
         const user = new User({
             username,
-            passwordHash
+            passwordHash,
+            daily: false
         })
         const savedUser = await user.save()
         res.status(201)

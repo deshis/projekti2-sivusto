@@ -1,6 +1,7 @@
 const towerRouter = require('express').Router()
 const Tower = require('../schemas/tower')
 const schedule = require('node-schedule');
+const User = require('../schemas/user')
 
 const towers = [
     "Dart Monkey",
@@ -58,8 +59,16 @@ const rule = new schedule.RecurrenceRule();
 rule.hour = 0;
 rule.minute = 0;
 rule.tz = 'Etc/UTC';
-const job = schedule.scheduleJob(rule, function(){
+const job = schedule.scheduleJob(rule, async function(){
   dailyTower = generateTower()
+
+    //reset user dailies to false
+    const users = await User.find({})
+    users.forEach(async (user) => {
+        user.daily=false
+        await user.save()
+    })
+
 }) 
 
 

@@ -8,7 +8,8 @@ mongoose.connect(url)
 const userSchema = new mongoose.Schema({
         username: String,
         passwordHash: String,
-        scores: Array
+        scores: Array,
+        daily: Boolean
   })
 
   userSchema.set('toJSON', {
