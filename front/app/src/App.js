@@ -14,7 +14,9 @@ const App = () => {
   const [isResultOverlay, setIsResultOverlay] = useState(false);
   const [mainPath, setMainPath] = useState(null)
   const [isLoginForm, setIsLoginForm] = useState(false);
+  const [isScoresOverlay, setIsScoresOverlay] = useState(false);
   const [user, setUser] = useState(null);
+  const [scores, setScores] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [scoreSaved, setScoreSaved] = useState(false);
   
@@ -29,6 +31,11 @@ const App = () => {
     }
   }, [setUser])
 
+  useEffect(() => {
+    if(user && scores.length <= 0){
+      Users.getScores().then(data => {setScores(data.scores)});
+    }
+  }, [user, scores])
 
   useEffect(() => {
     if(!monkey){
@@ -63,9 +70,15 @@ const App = () => {
     setScoreSaved(false);
   }
 
+  const getTime = (d) => {
+    const date = new Date(d);
+    return date.toLocaleString('fi-FI', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
   const saveScore = () =>{
     Users.postScore({guesses: guesses.length, tower: monkey, time: Date.now()});
     setScoreSaved(true);
+    setScores([]);
   }
 
   const addGuess = (newGuess) =>{
@@ -96,6 +109,7 @@ const App = () => {
       <div>
         <p style={{color:"white"}}>logged in as:</p>
         <label>{user.username}</label><br/>
+        <button onClick={()=>setIsScoresOverlay(!isScoresOverlay)}>scores</button>
         <button onClick={handleLogOut}>log out</button>
       </div>
       ) : (
@@ -107,6 +121,20 @@ const App = () => {
           <Login setUser={setUser}/>
         </Overlay>
       ): null}
+
+      {(isScoresOverlay && user && scores) ? (
+        <Overlay isOpen={isScoresOverlay} close={() => setIsScoresOverlay(false)} >
+          {scores.map((score) => 
+            <div key={score.tower.type}>
+              <label>{getTime(score.time)}</label> <br/>
+              <label>Guesses: {score.guesses}</label> <br/>
+              <label>{score.tower.type} {score.tower.upgrades.join('-')}</label>  <br/><br/>
+            </div>
+          )}
+        </Overlay>
+      ): null}
+
+      
       
       <GuessForm createGuess={addGuess} options={monkeys}/>
       <br/>
