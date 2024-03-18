@@ -1,5 +1,6 @@
-  const supertest = require('supertest')
+const supertest = require('supertest')
 const app = require('../app')
+const schedule = require('node-schedule');
 
 const api = supertest(app)
 
@@ -22,7 +23,6 @@ test('random tower upgrades is array of numbers', async () => {
     expect(Array.isArray(towerArray)).toBe(true)
     expect(towerArray.every(i => typeof i === "string")).toBe(true)
   })
-
 
   test('getting towerdata works with valid request', async () => {
     const response = await api.get('/api/towers/towerdata/Dart Monkey')
@@ -63,4 +63,16 @@ test('random tower upgrades is array of numbers', async () => {
 
     await api.get('/api/towers/towerprice/Banana Farm/[-1,0,0]')
     .expect(400)
+  })
+
+  test('daily tower upgrades is array of numbers', async () => {
+    const response = await api.get('/api/towers/daily')
+    const upgradeArray = response.body.upgrades
+    expect(Array.isArray(upgradeArray)).toBe(true)
+    expect(upgradeArray.every(i => typeof i === "number")).toBe(true)
+  })
+
+  test('daily tower type is string', async () => {
+    const response = await api.get('/api/towers/daily')
+    expect(typeof response.body.type).toBe("string")
   })

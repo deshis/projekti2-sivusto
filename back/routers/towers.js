@@ -1,5 +1,6 @@
 const towerRouter = require('express').Router()
 const Tower = require('../schemas/tower')
+const schedule = require('node-schedule');
 
 const towers = [
     "Dart Monkey",
@@ -27,7 +28,7 @@ const towers = [
     "Beast Handler"
 ]
 
-towerRouter.get('/randomtower', async (req, res) => {
+function generateTower(){
     let type = towers[Math.floor(Math.random() * towers.length)]
 
     let mainPath = Math.floor(Math.random() * 3)
@@ -35,10 +36,9 @@ towerRouter.get('/randomtower', async (req, res) => {
     let mainPathTier = Math.floor(Math.random() * 6)
     let crossPathTier = Math.floor(Math.random() * 3)
 
-    
     if(crossPath === mainPath){
         crossPathTier = 0 
-    }else if (crossPathTier > mainPathTier){
+    } else if (crossPathTier > mainPathTier){
         crossPathTier = mainPathTier
     }
 
@@ -47,10 +47,28 @@ towerRouter.get('/randomtower', async (req, res) => {
     upgrades[crossPath]=crossPathTier
     upgrades[mainPath]=mainPathTier
 
-    res.status(200).json({
-        "type":type,
-        "upgrades":upgrades
-    })
+    return {"type":type,"upgrades":upgrades}
+}
+
+
+let dailyTower = generateTower()
+
+//new random daily tower every day at 00:00 UTC 
+const rule = new schedule.RecurrenceRule();
+rule.hour = 0;
+rule.minute = 0;
+rule.tz = 'Etc/UTC';
+const job = schedule.scheduleJob(rule, function(){
+  dailyTower = generateTower()
+}) 
+
+
+towerRouter.get('/randomtower', async (req, res) =>{
+    res.status(200).json(generateTower())
+})
+
+towerRouter.get('/daily', async (req, res) => {
+    res.status(200).json(dailyTower)
 })
 
 towerRouter.get('/', async (req, res) => {
@@ -60,6 +78,7 @@ towerRouter.get('/', async (req, res) => {
 })
 
 towerRouter.get('/towerdata/:name', async (req, res) => {
+
     const name = req.params.name
     let towerData = await Tower.findOne({"type":name})
     if(towerData){
