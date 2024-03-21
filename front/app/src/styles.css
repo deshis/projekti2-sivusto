@@ -5,7 +5,8 @@ body{
 h1{
     color: #dbdbdb;
     font-family: "Arial";
-    font-size: 250%;
+    font-size: 45px;
+    padding-top: 40px;
 }
 
 label{
@@ -31,6 +32,26 @@ button {
 button:hover{
     background-color: #dbdbdb !important;
     color: #000000;
+}
+
+.Notification{
+    color: #bf3c2e;
+    font: 30px "Arial";
+    border: 10px solid #74281f;
+    border-radius: 25px;
+    padding: 10px;
+    width: fit-content;
+    height: fit-content;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    z-index: 10;
+}
+
+.Notification:empty { 
+    border: none;
 }
 
 .loginForm{
@@ -78,7 +99,8 @@ button:hover{
   }
 
   .overlayContainer{
-    border: 10px solid #85868d;
+    border: 10px solid #5c5c61;
+    border-radius: 25px;
     background-color: #bd8216;
     position: fixed;
     top: 0;

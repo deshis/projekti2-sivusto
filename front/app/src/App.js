@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Guess from './components/Guess'
 import GuessForm from './components/GuessForm'
 import Overlay from './components/Overlay'
@@ -23,6 +23,8 @@ const App = () => {
   const [dailyGame, setDailyGame] = useState(false);
   const [dailyDone, setDailyDone] = useState(false);
   
+  const notificationRef = useRef(null);
+
   //User stays logged in even when page refreshes
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -46,6 +48,15 @@ const App = () => {
       setMonkeys(towers);
     });
   }, [])
+
+  
+  const setNotification = (message) => {
+    notificationRef.current.innerText = message;
+    setTimeout(() => {
+      notificationRef.current.innerText = "";
+    }, 5000);
+    
+  }
 
   const handleLogOut = () =>{
     setUser(null);
@@ -103,7 +114,7 @@ const App = () => {
   const addGuess = (newGuess) =>{
     console.log(newGuess);
     if(newGuess.monkey === undefined) {
-      alert('Your input is empty!');
+      setNotification('Your input is empty!');
       return;
     }
     var success = monkeys.some(function(element) {
@@ -113,7 +124,7 @@ const App = () => {
       }
       return false;
     });
-    if(!success) alert('Add an acceptable monkey!');
+    if(!success) setNotification('Add an acceptable monkey!');
     else if(monkey.upgrades.toString() === newGuess.paths.toString() && monkey.type === newGuess.monkey){
       setIsResultOverlay(true);
       setGameOver(true);
@@ -122,7 +133,9 @@ const App = () => {
   
   return(
     <div style={{margin:'auto', width: '50%', textAlign:'center'}}>
-      <h1>Definitely the app ever!</h1>
+      <h1>Guess the BloonsTD 6 tower!</h1>
+
+      <div className='Notification' ref={notificationRef}></div>
       
       {user ? (
       <div>
@@ -137,7 +150,7 @@ const App = () => {
       
       {(isLoginForm && !user) ? (
         <Overlay isOpen={isLoginForm} close={() => setIsLoginForm(false)} >
-          <Login setUser={setUser}/>
+          <Login setUser={setUser} setNotification={setNotification}/>
         </Overlay>
       ): null}
 
@@ -165,7 +178,7 @@ const App = () => {
         <label>start game</label> <br/>
         <button onClick={()=>handleGameStart(false)}>normal</button>
         
-        {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}>daily done!</label> : <button onClick={()=>handleGameStart(true)}>daily</button>) : null}
+        {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : null}
         </>
       )}
       <br/>

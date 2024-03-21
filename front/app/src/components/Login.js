@@ -1,12 +1,11 @@
 import Users from '../services/Users';
 import { useState } from 'react';
 
-const Login = ({ setUser }) => {
+const Login = ({ setUser, setNotification }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isSignUp, setIsSignUp] = useState(false);
-    const [notif, setNotif] = useState(false);
 
     const handleLogin = (event) => {
         event.preventDefault();
@@ -16,13 +15,13 @@ const Login = ({ setUser }) => {
             window.localStorage.setItem(
                 'loggedUser', JSON.stringify(data)
             )
-        }).catch(error => alert(error.message));
+        }).catch(error => setNotification(error.response.data.error));
     }
 
     const handleSingUp = (event) => {
         event.preventDefault();
         if(password !== confirmPassword){
-            setNotif(true);
+            setNotification("Make sure both passwords are the same!");
         }else{
             Users.signUp(username, password).then((data) => {
                 Users.login(username, password).then((data) => {
@@ -31,8 +30,8 @@ const Login = ({ setUser }) => {
                     window.localStorage.setItem(
                         'loggedUser', JSON.stringify(data)
                     )
-                }).catch(error => alert(error.message));
-            }).catch(error => alert(error.message));
+                }).catch(error => setNotification(error.response.data.error));
+            }).catch(error => setNotification(error.response.data.error));
         }
     }
 
@@ -45,7 +44,6 @@ const Login = ({ setUser }) => {
 
     return (
         <div>
-            {notif ? <p style={{color: "red"}}>Make sure both passwords are the same!!!</p> : null}
             {isSignUp ? (
                     <div>
                         <form className="loginForm" onSubmit={handleSingUp}>
