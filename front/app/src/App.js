@@ -101,6 +101,11 @@ const App = () => {
     return date.toLocaleString('fi-FI', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
   }
 
+  const getDate = (d) => {
+    const date = new Date(d);
+    return date.toLocaleString('fi-FI', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
   const saveScore = () =>{
     Users.postScore({daily: dailyGame, guesses: guesses.length, tower: monkey, time: Date.now()});
     if(dailyGame){
@@ -132,11 +137,10 @@ const App = () => {
   }
   
   return(
-    <div style={{margin:'auto', width: '50%', textAlign:'center'}}>
-      <h1>Guess the BloonsTD 6 tower!</h1>
-
+    <>
+    <div style={{margin:'auto', textAlign:'center'}}>
       <div className='Notification' ref={notificationRef}></div>
-      
+      <h1>Guess the BloonsTD 6 tower!</h1>
       {user ? (
       <div>
         <p style={{color:"white"}}>logged in as:</p>
@@ -155,14 +159,29 @@ const App = () => {
       ): null}
 
       {(isScoresOverlay && user && scores) ? (
-        <Overlay isOpen={isScoresOverlay} close={() => setIsScoresOverlay(false)} >
-          {scores.map((score) => 
-            <div key={score.tower.type}>
-              <label>{getTime(score.time)}</label> <br/>
-              <label>Guesses: {score.guesses}</label> <br/>
-              <label>{score.tower.type} {score.tower.upgrades.join('-')}</label>  <br/><br/>
+        <Overlay isOpen={isScoresOverlay} close={() => setIsScoresOverlay(false)}>
+          <div className='scoreHolder'>
+            <div className='scoreBlock'>
+            <label>Daily Game</label> <br/><br/>
+              {scores.filter(score => score.daily).map((score) => 
+                <div key={score.tower.type}>
+                  <label><label className='date'>{getDate(score.time)}</label></label> <br/>
+                  <label>Guesses: <b>{score.guesses}</b></label> <br/>
+                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>  <br/><br/>
+                </div>
+              )}
             </div>
-          )}
+            <div className='scoreBlock'>
+              <label>Normal Game</label> <br/><br/>
+              {scores.filter(score => !score.daily).map((score) => 
+                <div key={score.tower.type}>
+                  <label><label className='date'>{getTime(score.time)}</label></label> <br/>
+                  <label>Guesses: <b>{score.guesses}</b></label> <br/>
+                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>  <br/><br/>
+                </div>
+              )}
+            </div>
+          </div>
         </Overlay>
       ): null}
 
@@ -183,45 +202,47 @@ const App = () => {
       )}
       <br/>
       
-      {guesses.length > 0 ? (
-      <div className="row">  
-        <div className="column" >type</div> 
-        <div className="column" >category</div>
-        <div className="column" >top</div>
-        <div className="column" >mid</div>
-        <div className="column" >bot</div>
-        <div className="column" >cost</div>
+      <div className='guessHolder'>
+        {guesses.length > 0 ? (
+        <div className="row">  
+          <div className="column" >type</div> 
+          <div className="column" >category</div>
+          <div className="column" >top</div>
+          <div className="column" >mid</div>
+          <div className="column" >bot</div>
+          <div className="column" >cost</div>
+        </div>
+        ): null}
+        {guesses.map((guess, i) =>
+          <Guess key={i} guess={guess} answer={monkey} index={i}/>
+        )}
       </div>
-      ): null}
-      
-      {guesses.map((guess, i) =>
-        <Guess key={i} guess={guess} answer={monkey} index={i}/>
-      )}
 
       {gameOver ? (<button onClick={handleRestart}>new game?</button>) : null}
 
       <Overlay isOpen={isResultOverlay} close={() => setIsResultOverlay(false)}>
           {monkey && monkeyData && mainPath ? ( 
           <div>
-            <div className='overlayText'>
-              <div>{monkey.type} {monkey.upgrades.join("-")}</div>
-              {(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].name : monkeyData.type} <br/>
-              Category: {monkeyData.category}<br/><br/>
-              {(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].description : monkeyData.description}<br/><br/>
+            <div className='resultScreenText'>
+              <label><label className='type'>{monkey.type}</label> {monkey.upgrades.join("-")}</label><br/>
+              <label className='upgradeName'>{(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].name : monkeyData.type}</label> <br/>
+              <label>Category: <label className='category'>{monkeyData.category}</label></label><br/><br/>
+              <label className='desc'>{(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].description : monkeyData.description}</label><br/><br/>
             </div>
-            <div className='overlayImage'>
+            <div className='resultScreenImage'>
               <br/>
               <img src={(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].image : monkeyData.image} alt="monkey"/>
             </div>
             <br/>
-            Total guesses: {guesses.length} <br/>
-            {!scoreSaved ? <button onClick={saveScore}>save score</button> : <><br/>score saved as {user.username}<br/></> }
+            <label>Total guesses: <b>{guesses.length}</b> <br/></label>
+            {!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p> }
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
           }
       </Overlay>
 
     </div>
+    </>
   )
 }
 

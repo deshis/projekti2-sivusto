@@ -6,7 +6,6 @@ h1{
     color: #dbdbdb;
     font-family: "Arial";
     font-size: 45px;
-    padding-top: 40px;
 }
 
 label{
@@ -42,16 +41,14 @@ button:hover{
     padding: 10px;
     width: fit-content;
     height: fit-content;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     margin: 0 auto;
     z-index: 10;
 }
 
-.Notification:empty { 
-    border: none;
+.Notification:empty {
+    border: hidden;
+    padding: 35px;
 }
 
 .loginForm{
@@ -87,6 +84,53 @@ button:hover{
     background-color: #1e1f26;
 }   
 
+.guessHolder {
+    width: 1000px;
+    margin: auto;
+    text-align: center;
+}
+
+.scoreHolder {
+    min-width: 750px;
+}
+
+.scoreBlock {
+    display: inline-block;
+    width: 50%;
+    max-height: 500px;
+    vertical-align:top;
+    overflow: auto;
+}
+
+.scoreBlock > label{
+    color: #bf3c2e;
+    font-weight: bold;
+}
+
+label.type{
+    color: #1c793b;
+    font-weight: bold;
+}
+
+label .date{
+    color: #1c3670;
+    font-style: italic;
+}
+
+.upgradeName{
+    color: #1c793b;
+    font-style: italic;
+}
+
+.category{
+    color: #bf3c2e;
+}
+
+.desc{
+    font-size: 20px;
+    font-style: oblique;
+}
+
 .overlayBG {
     background-color: rgba(17, 17, 17, 0.699);
     width: 100%;
@@ -96,7 +140,7 @@ button:hover{
     left: 0;
     cursor: pointer;
     z-index: 9;
-  }
+}
 
   .overlayContainer{
     border: 10px solid #5c5c61;
@@ -112,38 +156,19 @@ button:hover{
     padding: 30px;
     width: fit-content;
     height: fit-content;
-  }
+}
 
-  .overlayText{
+.resultScreenText{
     display: inline-block;
     min-width: 300px;
     max-width: 500px;
     padding-top: 25px;
-    color: #dbdbdb;
-    font: bold 35px "Arial" ;
-    -webkit-text-stroke: #000000 0.75px;
-  }
-
-  .overlayImage{
-    display: inline-block;
-    position:relative;
-    bottom: 75px;
-    margin: 30px;
-  }
-
-  .overlayContainer > div > button{
-    vertical-align: center;
-    text-align: center;
-    color: #dbdbdb;
-    font-size: 25px;
-    border: 2px solid #2d2e36;
-    background-color: #1e1f26;
-    margin-top: 25px;
+    vertical-align: top;
 }
 
-.overlayContainer > div > button:hover {
-    background-color: #dbdbdb !important;
-    color: #000000;
+.resultScreenImage{
+    display: inline-block;
+    vertical-align:middle;
 }
 
 .Upgrades{
@@ -196,6 +221,7 @@ button:hover{
     color: #dbdbdb;
     padding: 15px 25px;
     max-height: 400px;
+    width: 500px;
     font-size: 25px;
     border: 2px solid #2d2e36;
     background-color: #1e1f26;
@@ -226,7 +252,7 @@ button:hover{
 
 .suggestions {
     max-height: 200px;
-    width: 55%;
+    width: 550px;
     cursor: pointer;
     overflow: auto;
     margin: auto;

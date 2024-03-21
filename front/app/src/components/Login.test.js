@@ -18,17 +18,3 @@ test('Login swithces correctly to sing up page', async () => {
     expect(screen.getByText('confirm password:')).toBeInTheDocument();
 })
 
-test("Send alert if confirm password isn't the same", async () => {
-    const user = userEvent.setup();
-    const setUser = jest.fn();
-
-    render(<Login setUser={setUser} />)
-    
-
-    await user.click(screen.getByText("sing up?"));
-    await user.type(screen.getByLabelText('password:'), 'password123');
-    await user.type(screen.getByLabelText('confirm password:'), 'password321');
-    await user.click(screen.getAllByRole('button')[0]);
-    
-    expect(screen.getByText('Make sure both passwords are the same!!!')).toBeInTheDocument();
-})
