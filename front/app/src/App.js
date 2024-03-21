@@ -16,9 +16,12 @@ const App = () => {
   const [isLoginForm, setIsLoginForm] = useState(false);
   const [isScoresOverlay, setIsScoresOverlay] = useState(false);
   const [user, setUser] = useState(null);
-  const [scores, setScores] = useState([]);
+  const [scores, setScores] = useState(null);
   const [gameOver, setGameOver] = useState(false);
   const [scoreSaved, setScoreSaved] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [dailyGame, setDailyGame] = useState(false);
+  const [dailyDone, setDailyDone] = useState(false);
   
   //User stays logged in even when page refreshes
   useEffect(() => {
@@ -26,29 +29,17 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       if(!user) return;
-      setUser(user);
       Users.setToken(user.token);
+      setUser(user);
     }
   }, [setUser])
 
   useEffect(() => {
-    if(user && scores.length <= 0){
+    if(user && !scores){
       Users.getScores().then(data => {setScores(data.scores)});
+      Users.isDailyDone().then(data => {setDailyDone(data);});
     }
   }, [user, scores])
-
-  useEffect(() => {
-    if(!monkey){
-      Towers.getRandomTower().then(tower => {
-          console.log('promise fulfilled');
-          console.log(tower.type);
-          console.log(tower.upgrades);
-          setMonkey(tower);
-          setMainPath(Towers.getLargestUpgrade(tower.upgrades));
-          Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
-      })
-    }
-  }, [monkey])
 
   useEffect(() => {
     Towers.getTowerArray().then(towers => {
@@ -62,12 +53,36 @@ const App = () => {
     window.localStorage.removeItem('loggedUser')
   }
 
+  const handleGameStart = (isDaily) => {
+    setDailyGame(isDaily);
+    setGameStarted(true);
+
+    if(isDaily){
+      Towers.getDailyTower().then(tower => {
+          console.log('the daily chongler');
+          console.log(tower.type);
+          console.log(tower.upgrades);
+          setMonkey(tower);
+          setMainPath(Towers.getLargestUpgrade(tower.upgrades));
+          Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
+      });
+    }else{
+      Towers.getRandomTower().then(tower => {
+        console.log(tower.type);
+        console.log(tower.upgrades);
+        setMonkey(tower);
+        setMainPath(Towers.getLargestUpgrade(tower.upgrades));
+        Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
+    });}
+  }
+
   const handleRestart = () =>{
     setIsResultOverlay(false);
     setMonkey(null);
     setGuesses([]);
     setGameOver(false);
     setScoreSaved(false);
+    setGameStarted(false);
   }
 
   const getTime = (d) => {
@@ -76,9 +91,13 @@ const App = () => {
   }
 
   const saveScore = () =>{
-    Users.postScore({guesses: guesses.length, tower: monkey, time: Date.now()});
+    Users.postScore({daily: dailyGame, guesses: guesses.length, tower: monkey, time: Date.now()});
+    if(dailyGame){
+      Users.postDailyDone();
+      setDailyDone(true);
+    }
     setScoreSaved(true);
-    setScores([]);
+    setScores(null);
   }
 
   const addGuess = (newGuess) =>{
@@ -135,8 +154,20 @@ const App = () => {
       ): null}
 
       
-      
-      <GuessForm createGuess={addGuess} options={monkeys}/>
+      {gameStarted ? (
+        <>
+          <label>{dailyGame ? 'Daily game' : 'Normal game'}</label>
+          <GuessForm createGuess={addGuess} options={monkeys}/>
+        </>
+      ) : (
+        <>
+        <br/>
+        <label>start game</label> <br/>
+        <button onClick={()=>handleGameStart(false)}>normal</button>
+        
+        {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}>daily done!</label> : <button onClick={()=>handleGameStart(true)}>daily</button>) : null}
+        </>
+      )}
       <br/>
       
       {guesses.length > 0 ? (

@@ -29,11 +29,21 @@ const postScore = (score) => {
 }
 
 const getScores = () => {
+    if(token === null) return; 
     const config = {
         headers: { Authorization: token},
     }
-
     const request = axios.get(baseURL+"/api/scores", config);
+    return request.then(response => response.data);
+}
+
+const isDailyDone = () => {
+    const request = axios.get(baseURL+"/api/daily", {headers: {Authorization: token},});
+    return request.then(response => response.data.daily);
+}
+
+const postDailyDone = () => {
+    const request = axios.post(baseURL+"/api/daily", {"daily": true}, {headers: {Authorization: token},});
     return request.then(response => response.data);
 }
 
@@ -43,6 +53,8 @@ const exported = {
     signUp,
     postScore,
     getScores,
+    isDailyDone,
+    postDailyDone,
 }
 
 export default exported;

@@ -11,6 +11,11 @@ const getRandomTower = () => {
     return request.then(response => response.data);
 }
 
+const getDailyTower = () => {
+    const request = axios.get(baseURL+"/api/towers/daily");
+    return request.then(response => response.data);
+}
+
 const getTowerData = (tower) => {
     const request = axios.get(baseURL+"/api/towers/towerdata/"+tower);
     return request.then(response => response.data);
@@ -60,6 +65,7 @@ const getLargestUpgrade = (upgrades) => {
 const exportedObject = {
     getTowerArray, 
     getRandomTower, 
+    getDailyTower,
     getTowerData,
     getTowerTotalCost,
     getDefaultTowerImage,
