@@ -24,6 +24,7 @@ button {
     color: #dbdbdb;
     font: 25px "Arial";
     border: 2px solid #2d2e36;
+    border-radius: 10px;
     background-color: #1e1f26;
     margin: 25px;
 }
@@ -41,14 +42,16 @@ button:hover{
     padding: 10px;
     width: fit-content;
     height: fit-content;
-    position: relative;
+    position: absolute;
+    left: 0;
+    right: 0;
     margin: 0 auto;
+    bottom: 5%;
     z-index: 10;
 }
 
 .Notification:empty {
     border: hidden;
-    padding: 35px;
 }
 
 .loginForm{
@@ -107,6 +110,12 @@ button:hover{
     font-weight: bold;
 }
 
+.leaderboard {
+    max-height: 500px;
+    vertical-align:top;
+    overflow: auto;
+}
+
 label.type{
     color: #1c793b;
     font-weight: bold;
@@ -124,6 +133,11 @@ label .date{
 
 .category{
     color: #bf3c2e;
+}
+
+.username{
+    color: #bf3c2e;
+    font-weight: bold;
 }
 
 .desc{

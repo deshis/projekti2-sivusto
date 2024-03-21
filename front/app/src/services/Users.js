@@ -47,6 +47,21 @@ const postDailyDone = () => {
     return request.then(response => response.data);
 }
 
+const getLeaderboardToday = () => {
+    const request = axios.get(baseURL+"/api/daily/leaderboard");
+    return request.then(response => response.data.leaderboard);
+}
+
+const postLeaderboardEntry = (score) => {
+    const request = axios.post(baseURL+"/api/daily/leaderboard", score, {headers: {Authorization: token},});
+    return request.then(response => response);
+}
+
+const getLeaderboard = (date) => {
+    //theformatting...
+    return;
+}
+
 const exported = {
     setToken,
     login,
@@ -55,6 +70,9 @@ const exported = {
     getScores,
     isDailyDone,
     postDailyDone,
+    getLeaderboardToday,
+    postLeaderboardEntry,
+    getLeaderboard,
 }
 
 export default exported;

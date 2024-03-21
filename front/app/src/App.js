@@ -22,6 +22,8 @@ const App = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [dailyGame, setDailyGame] = useState(false);
   const [dailyDone, setDailyDone] = useState(false);
+  const [leaderboard, setLeaderboard] = useState(null);
+  const [isLeaderboard, setIsLeaderboard] = useState(false);
   
   const notificationRef = useRef(null);
 
@@ -44,6 +46,13 @@ const App = () => {
   }, [user, scores])
 
   useEffect(() => {
+    Users.getLeaderboardToday().then(board => {
+      setLeaderboard(board);
+      console.log(board);
+    });
+  }, [])
+
+  useEffect(() => {
     Towers.getTowerArray().then(towers => {
       setMonkeys(towers);
     });
@@ -61,7 +70,8 @@ const App = () => {
   const handleLogOut = () =>{
     setUser(null);
     setIsLoginForm(false);
-    window.localStorage.removeItem('loggedUser')
+    window.localStorage.removeItem('loggedUser');
+    setScores(null);
   }
 
   const handleGameStart = (isDaily) => {
@@ -88,6 +98,10 @@ const App = () => {
   }
 
   const handleRestart = () =>{
+    if(dailyGame){
+      Users.postDailyDone();
+      setDailyDone(true);
+    }
     setIsResultOverlay(false);
     setMonkey(null);
     setGuesses([]);
@@ -107,10 +121,10 @@ const App = () => {
   }
 
   const saveScore = () =>{
-    Users.postScore({daily: dailyGame, guesses: guesses.length, tower: monkey, time: Date.now()});
+    const score = {daily: dailyGame, guesses: guesses.length, tower: monkey, time: Date.now()};
+    Users.postScore(score);
     if(dailyGame){
-      Users.postDailyDone();
-      setDailyDone(true);
+      Users.postLeaderboardEntry(score);
     }
     setScoreSaved(true);
     setScores(null);
@@ -139,18 +153,20 @@ const App = () => {
   return(
     <>
     <div style={{margin:'auto', textAlign:'center'}}>
-      <div className='Notification' ref={notificationRef}></div>
       <h1>Guess the BloonsTD 6 tower!</h1>
       {user ? (
       <div>
-        <p style={{color:"white"}}>logged in as:</p>
-        <label>{user.username}</label><br/>
-        <button onClick={()=>setIsScoresOverlay(!isScoresOverlay)}>scores</button>
-        <button onClick={handleLogOut}>log out</button>
+        <div style={{display: 'inline-block'}}><p style={{color: 'white'}}>user:  <label>{user.username}</label></p></div>
+        <button style={{margin:10}} onClick={handleLogOut}>log out</button> <br/>
       </div>
       ) : (
         <button className='loginButton' onClick={()=>setIsLoginForm(!isLoginForm)}>Login?</button>
       )}
+
+      <div>
+        {user ? <button onClick={()=>setIsScoresOverlay(!isScoresOverlay)}>scores</button> : null}
+        <button onClick={()=>setIsLeaderboard(!isLeaderboard)}>leaderboard</button>
+      </div>
       
       {(isLoginForm && !user) ? (
         <Overlay isOpen={isLoginForm} close={() => setIsLoginForm(false)} >
@@ -185,20 +201,33 @@ const App = () => {
         </Overlay>
       ): null}
 
+      {(leaderboard) ? (<Overlay isOpen={isLeaderboard} close={() => setIsLeaderboard(false)}>
+        <div className='leaderboard'>
+        {leaderboard.scores.sort((a, b) => a.guesses - b.guesses).map((entry) => 
+            <div key={entry.username}>
+                <label className='username'>{entry.username}</label> <br/>
+                <label><label className='date'>{getTime(entry.time)}</label></label> <br/>
+                <label>Guesses: <b>{entry.guesses}</b></label> <br/>
+                <label><label className="type">{entry.tower.type}</label> {entry.tower.upgrades.join('-')}</label>  <br/><br/>
+            </div>
+        )}
+        </div>
+      </Overlay>) : null}
+
       
       {gameStarted ? (
         <>
-          <label>{dailyGame ? 'Daily game' : 'Normal game'}</label>
+          <label>{dailyGame ? 'Daily Game' : 'Normal Game'}</label>
           <GuessForm createGuess={addGuess} options={monkeys}/>
         </>
       ) : (
-        <>
-        <br/>
-        <label>start game</label> <br/>
-        <button onClick={()=>handleGameStart(false)}>normal</button>
+        <div>
+          <br/>
+          <label>Play!</label><br/>
+          {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}><br/>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : <label style={{fontSize: 20, color: "#bf3c2e"}}><br/>login for daily</label>}
+          <button style={{marginTop:0}} onClick={()=>handleGameStart(false)}>normal</button>
         
-        {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : null}
-        </>
+        </div>
       )}
       <br/>
       
@@ -240,7 +269,7 @@ const App = () => {
           </div> ) : null
           }
       </Overlay>
-
+      <div className='Notification' ref={notificationRef}></div>
     </div>
     </>
   )
