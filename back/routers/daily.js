@@ -7,25 +7,6 @@ const Leaderboard = require('../schemas/leaderboard')
 const schedule = require('node-schedule');
 
 
-var today = new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1) + "-" + new Date().getUTCDate();
-
-
-//update date at 00:00 utc
-const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.minute = 0;
-rule.tz = 'Etc/UTC';
-const job = schedule.scheduleJob(rule, function(){
-
-    const dateObj = new Date();
-    const month   = dateObj.getUTCMonth() + 1;
-    const day     = dateObj.getUTCDate();
-    const year    = dateObj.getUTCFullYear();
-    today = year + "-" + month + "-" + day;
-
-}) 
-
-
 dailyRouter.post('/', async (req, res) => {
     const dailyDone = req.body.daily
 
@@ -75,6 +56,8 @@ dailyRouter.get('/', async (req, res) => {
 
 
 dailyRouter.post('/leaderboard', async (req, res) => {
+    const today = new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1) + "-" + new Date().getUTCDate();
+
     let decodedToken
     try{
         decodedToken = jwt.verify(getTokenFrom(req), config.SECRET)
@@ -112,6 +95,7 @@ dailyRouter.post('/leaderboard', async (req, res) => {
 
 
 dailyRouter.get('/leaderboard', async (req, res) => {
+    const today = new Date().getUTCFullYear() + "-" + (new Date().getUTCMonth() + 1) + "-" + new Date().getUTCDate();
 
     let leaderboard = await Leaderboard.findOne({date:today})
     if(!leaderboard){
@@ -128,7 +112,8 @@ dailyRouter.get('/leaderboard/:date', async (req, res) => {
 
     let leaderboard = await Leaderboard.findOne({date:today})
     if(!leaderboard){
-        return res.status(404).json({error: "This date does not have a leaderboard"})
+        leaderboard = new Leaderboard({date:today, scores:[]})
+        await leaderboard.save()
     }
 
     res.status(200)

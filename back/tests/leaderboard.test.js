@@ -79,14 +79,4 @@ test('getting leaderboard of specific date works', async () => {
         .expect(200)
 
     expect(Array.isArray(response.body.leaderboard.scores)).toBe(true)
-  })
-
-
-test('getting leaderboard of date with no leaderboard fails', async () => {
-
-    let badDate = "2000-1-1"
-    
-    const response = await api
-        .get('/api/daily/leaderboard/'+badDate)
-        .expect(404)
-  })
+})
