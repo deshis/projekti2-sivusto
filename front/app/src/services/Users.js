@@ -13,7 +13,6 @@ const login = (username, password) => {
 }
 
 const signUp = (username, password) => {
-    console.log(({username, password}));
     const request = axios.post(baseURL+"/api/signup", {username, password});
     return request.then(response => response.data);
 }
@@ -23,7 +22,6 @@ const postScore = (score) => {
         headers: { Authorization: token},
     }
 
-    console.log(score);
     const request = axios.post(baseURL+"/api/scores", score, config);
     return request.then(response => response.data);
 }
@@ -58,8 +56,8 @@ const postLeaderboardEntry = (score) => {
 }
 
 const getLeaderboard = (date) => {
-    //theformatting...
-    return;
+    const request = axios.get(`${baseURL}/api/daily/leaderboard/${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`);
+    return request.then(response => response.data.leaderboard);
 }
 
 const exported = {

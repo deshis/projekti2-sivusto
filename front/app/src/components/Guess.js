@@ -1,7 +1,9 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Towers from "../services/Towers"
 
 const Guess = ({ guess, answer, index}) => {
+  const [cost, setCost] = useState(0);
+
   const type = useRef(null);
   const categoryRef = useRef(null); 
   const costRef = useRef(null);
@@ -21,7 +23,7 @@ const Guess = ({ guess, answer, index}) => {
       });
     });
     Towers.getTowerTotalCost(guess.monkey, guess.paths).then(data =>{
-      const cost = data;
+      setCost(data);
       Towers.getTowerTotalCost(answer.type, answer.upgrades).then(data =>{
         costRef.current.innerText = data === cost ? "✔️" : data > cost ? "⏫" : "⏬";
       });
@@ -31,7 +33,7 @@ const Guess = ({ guess, answer, index}) => {
   return (
       
     <div className="guessEntry" key={index}>
-      <label>{guess.monkey} {guess.paths.join('-')}</label>
+      <label><label className="towerName">{guess.monkey}</label> <b>{guess.paths.join('-')}</b> <label className="cost">${cost}</label></label>
       <div className="row">
   
         <div key="type" className="column" ref={type}></div> 

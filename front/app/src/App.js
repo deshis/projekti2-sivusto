@@ -24,6 +24,7 @@ const App = () => {
   const [dailyDone, setDailyDone] = useState(false);
   const [leaderboard, setLeaderboard] = useState(null);
   const [isLeaderboard, setIsLeaderboard] = useState(false);
+  const [leaderboardDate, setLeaderboardDate] = useState(new Date(new Date().toDateString()));
   
   const notificationRef = useRef(null);
 
@@ -46,11 +47,12 @@ const App = () => {
   }, [user, scores])
 
   useEffect(() => {
-    Users.getLeaderboardToday().then(board => {
-      setLeaderboard(board);
-      console.log(board);
-    });
-  }, [])
+    if(!leaderboard){
+      Users.getLeaderboard(leaderboardDate).then(board => {
+        setLeaderboard(board);
+      });
+    }
+  }, [leaderboard, leaderboardDate])
 
   useEffect(() => {
     Towers.getTowerArray().then(towers => {
@@ -59,6 +61,13 @@ const App = () => {
   }, [])
 
   
+  const updateDate = (change) => {
+    setLeaderboard(null);
+    let date = new Date(leaderboardDate);
+    date.setDate(date.getDate() + change);
+    setLeaderboardDate(date);
+  }
+
   const setNotification = (message) => {
     notificationRef.current.innerText = message;
     setTimeout(() => {
@@ -80,17 +89,12 @@ const App = () => {
 
     if(isDaily){
       Towers.getDailyTower().then(tower => {
-          console.log('the daily chongler');
-          console.log(tower.type);
-          console.log(tower.upgrades);
           setMonkey(tower);
           setMainPath(Towers.getLargestUpgrade(tower.upgrades));
           Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
       });
     }else{
       Towers.getRandomTower().then(tower => {
-        console.log(tower.type);
-        console.log(tower.upgrades);
         setMonkey(tower);
         setMainPath(Towers.getLargestUpgrade(tower.upgrades));
         Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
@@ -131,7 +135,6 @@ const App = () => {
   }
 
   const addGuess = (newGuess) =>{
-    console.log(newGuess);
     if(newGuess.monkey === undefined) {
       setNotification('Your input is empty!');
       return;
@@ -183,7 +186,8 @@ const App = () => {
                 <div key={score.tower.type}>
                   <label><label className='date'>{getDate(score.time)}</label></label> <br/>
                   <label>Guesses: <b>{score.guesses}</b></label> <br/>
-                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>  <br/><br/>
+                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>
+                  <img className="scoreImage" alt="scoreImage" src={Towers.getTowerImage(score.tower.type, score.tower.upgrades)}></img>  <br/><br/>
                 </div>
               )}
             </div>
@@ -193,7 +197,8 @@ const App = () => {
                 <div key={score.tower.type}>
                   <label><label className='date'>{getTime(score.time)}</label></label> <br/>
                   <label>Guesses: <b>{score.guesses}</b></label> <br/>
-                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>  <br/><br/>
+                  <label><label className="type">{score.tower.type}</label> {score.tower.upgrades.join('-')}</label>  <br/>
+                  <img className="scoreImage" alt="scoreImage" src={Towers.getTowerImage(score.tower.type, score.tower.upgrades)}></img> <br/><br/>
                 </div>
               )}
             </div>
@@ -203,14 +208,15 @@ const App = () => {
 
       {(leaderboard) ? (<Overlay isOpen={isLeaderboard} close={() => setIsLeaderboard(false)}>
         <div className='leaderboard'>
-        {leaderboard.scores.sort((a, b) => a.guesses - b.guesses).map((entry) => 
-            <div key={entry.username}>
+        <button className="left" onClick={()=>updateDate(-1)}>⬅️</button><label className='date'>{getDate(leaderboardDate)}</label> {(new Date(new Date().toDateString())) <= leaderboardDate ? <div className="right"/> : <button className="right" onClick={()=>updateDate(1)}>➡️</button>}
+        <br/><br/>
+        {leaderboard.scores.length > 0 ? leaderboard.scores.sort((a, b) => a.guesses - b.guesses).map((entry) => 
+            <div className='leaderboardEntry' key={entry.username}>
                 <label className='username'>{entry.username}</label> <br/>
                 <label><label className='date'>{getTime(entry.time)}</label></label> <br/>
                 <label>Guesses: <b>{entry.guesses}</b></label> <br/>
-                <label><label className="type">{entry.tower.type}</label> {entry.tower.upgrades.join('-')}</label>  <br/><br/>
             </div>
-        )}
+        ): <label className='leaderboardEntry'><br/>no daily scores</label>}
         </div>
       </Overlay>) : null}
 

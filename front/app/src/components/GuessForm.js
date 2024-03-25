@@ -126,7 +126,7 @@ const GuessForm = ({ createGuess, options }) => {
                         <br/>
                     </div>
                     <div className='TowerImage'>
-                        <img src={Towers.getDefaultTowerImage()} alt="monkey" onError={(e) => console.log(e.error)} ref={imageRef}/>
+                        <img src={Towers.getDefaultTowerImage()} alt="monkey" ref={imageRef}/>
                     </div>
                 </div>
 

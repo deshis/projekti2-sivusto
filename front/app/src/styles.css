@@ -110,10 +110,41 @@ button:hover{
     font-weight: bold;
 }
 
+.scoreImage{
+    object-fit: contain;
+    height: 150px;
+    width: auto;
+}
+
 .leaderboard {
     max-height: 500px;
     vertical-align:top;
     overflow: auto;
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.leaderboardEntry {
+    flex-basis: 100%;
+}
+
+.date {
+    align-self: center;
+    flex: 1;
+}
+
+.left {
+    align-self: flex-start;
+}
+
+.right {
+    align-self: flex-end;
+}
+
+div.right {
+    align-self: flex-end;
+    width: 100px;
 }
 
 label.type{
@@ -131,8 +162,18 @@ label .date{
     font-style: italic;
 }
 
+.cost{
+    color: #1c793b;
+    font-style: italic;
+}
+
 .category{
     color: #bf3c2e;
+}
+
+.towerName{
+    color: #bf3c2e;
+    font-weight: bold;
 }
 
 .username{
