@@ -123,6 +123,16 @@ button:hover{
     flex-basis: 100%;
 }
 
+.tutorial {
+    max-height: 500px;
+    width: 700px;
+    vertical-align:top;
+    overflow: auto;
+    align-items: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .date {
     align-self: center;
     flex: 1;
@@ -130,6 +140,11 @@ button:hover{
 
 .left {
     align-self: flex-start;
+}
+
+div.left{
+    align-self: flex-start;
+    width: 100px;
 }
 
 .right {

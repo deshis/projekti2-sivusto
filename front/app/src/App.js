@@ -5,6 +5,7 @@ import Overlay from './components/Overlay'
 import Towers from './services/Towers'
 import Users from './services/Users'
 import Login from './components/Login'
+import Tutorial from './components/Tutorial'
 
 const App = () => {
   const [guesses, setGuesses] = useState([]);
@@ -25,7 +26,8 @@ const App = () => {
   const [leaderboard, setLeaderboard] = useState(null);
   const [isLeaderboard, setIsLeaderboard] = useState(false);
   const [leaderboardDate, setLeaderboardDate] = useState(new Date(new Date().toDateString()));
-  
+  const [tutorial, setTutorial] = useState(false);
+
   const notificationRef = useRef(null);
 
   //User stays logged in even when page refreshes
@@ -220,6 +222,12 @@ const App = () => {
         </div>
       </Overlay>) : null}
 
+      {(tutorial) ? (
+      <Overlay isOpen={tutorial} close={() => setTutorial(false)}>
+        <Tutorial/>
+      </Overlay>
+      ): null}
+
       
       {gameStarted ? (
         <>
@@ -230,6 +238,7 @@ const App = () => {
         <div>
           <br/>
           <label>Play!</label><br/>
+          <button onClick={()=>setTutorial(true)}>tutorial</button><br/>
           {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}><br/>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : <label style={{fontSize: 20, color: "#bf3c2e"}}><br/>login for daily</label>}
           <button style={{marginTop:0}} onClick={()=>handleGameStart(false)}>normal</button>
         
