@@ -112,16 +112,19 @@ const GuessForm = ({ createGuess, options }) => {
                         <label>Upgrade Paths:</label>
                         <br/>
                         <div className='slider'>
-                            <label>{topPath}</label>
+                            <label>Top:<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></label>
                             <input type="range" value={topPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, topPath, [midPath, botPath]) ? setTopPath(e.target.value) : null}/>
+                            <label><b>{topPath}</b></label>
                         </div>
                         <div className='slider'>
-                            <label>{midPath}</label>
+                            <label>Middle:</label>
                             <input type="range" value={midPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, midPath, [topPath, botPath]) ? setMidPath(e.target.value) : null}/>
+                            <label><b>{midPath}</b></label>
                         </div>
                         <div className='slider'>
-                            <label>{botPath}</label>
+                            <label>Bottom:</label>
                             <input type="range" value={botPath} min={0} max={5} onChange={(e)=> handlePathChange(e.target.value, botPath, [topPath, midPath]) ? setBotPath(e.target.value) : null}/>
+                            <label><b>{botPath}</b></label>
                         </div>
                         <br/>
                     </div>

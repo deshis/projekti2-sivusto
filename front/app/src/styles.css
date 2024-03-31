@@ -87,12 +87,6 @@ button:hover{
     background-color: #1e1f26;
 }   
 
-.guessHolder {
-    width: 1000px;
-    margin: auto;
-    text-align: center;
-}
-
 .scoreHolder {
     min-width: 750px;
 }
@@ -226,11 +220,6 @@ label .date{
     vertical-align:middle;
 }
 
-.Upgrades{
-    display: inline-block;
-    padding: 50px;
-}
-
 .TowerImage{
     display: inline-block;
     padding: 50px;
@@ -253,7 +242,7 @@ label .date{
     flex-direction: column;
     flex-basis: 100%;
     flex: 1;
-    min-width: 100px;
+    min-width: 150x;
     max-width: 200px;
     margin-top: auto;
     margin-bottom: auto;
@@ -265,6 +254,13 @@ label .date{
 .guessEntry {
     border: 2px solid #2d2e36;
     padding: 10px;
+}
+
+.guessHolder {
+    min-width: 1000px;
+    max-width: 1250px;
+    margin: auto;
+    text-align: center;
 }
 
 .guessform{
@@ -297,12 +293,20 @@ label .date{
     color: #000000;
 }
 
+
+.Upgrades{
+    display: inline-block;
+    width: 400px;
+}
+
 .slider {
-    display:block;
+    display: flex;
     color: #dbdbdb;
     font-family: Arial;
     font-size: 25px;
     padding: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
 }
 
 .suggestions {

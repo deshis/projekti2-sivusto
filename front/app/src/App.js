@@ -240,12 +240,12 @@ const App = () => {
       <div className='guessHolder'>
         {guesses.length > 0 ? (
         <div className="row">  
-          <div className="column" >type</div> 
-          <div className="column" >category</div>
-          <div className="column" >top</div>
-          <div className="column" >mid</div>
-          <div className="column" >bot</div>
-          <div className="column" >cost</div>
+          <div className="column" >Type</div> 
+          <div className="column" >Category</div>
+          <div className="column" >Top Path</div>
+          <div className="column" >Middle Path</div>
+          <div className="column" >Bottom Path</div>
+          <div className="column" >Cost</div>
         </div>
         ): null}
         {guesses.map((guess, i) =>
