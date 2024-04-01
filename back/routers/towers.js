@@ -29,7 +29,7 @@ const towers = [
     "Beast Handler"
 ]
 
-function generateTower(){
+let generateTower = function(){
     let type = towers[Math.floor(Math.random() * towers.length)]
 
     let mainPath = Math.floor(Math.random() * 3)
@@ -133,5 +133,7 @@ towerRouter.get('/towerprice/:name/:upgrades', async (req, res) => {
     }
 })
 
-
-module.exports = towerRouter
+module.exports = {
+    towerRouter, 
+    generateTower
+}
