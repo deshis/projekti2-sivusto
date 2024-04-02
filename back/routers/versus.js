@@ -94,11 +94,9 @@ versusRouter.post('/leave', async (req, res) => {
     }
 
     return res.status(200).json({
-        code: room.code,
-        players: room.players,
-        guesses: room.guesses,
-        turn: room.turn
+        message: "you have left the room"
     })
+    
 })
 
 
