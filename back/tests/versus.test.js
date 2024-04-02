@@ -117,3 +117,24 @@ test('randomcode returns code', async () => {
     let msg = response.body.messages[0].message
      expect(msg).toBe("hello chat")
   })
+
+
+  test('leaving a room succeeds', async () => {
+    let response = await api
+        .post('/api/versus/leave')
+        .auth(testUserToken, { type: 'bearer' })
+        .send({"code":"12345"})
+        .expect(200)
+
+    expect(response.body.players.includes("testaccount")).toBe(false)
+  })
+
+  test('empty room gets deleted', async () => {
+    let response = await api
+        .post('/api/versus/leave')
+        .auth(guyToken, { type: 'bearer' })
+        .send({"code":"12345"})
+        .expect(200)
+
+    expect(await Room.findOne({code:"12345"})).toBe(null)
+  })

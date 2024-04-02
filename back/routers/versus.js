@@ -4,25 +4,15 @@ const jwt = require('jsonwebtoken')
 const config = require('../utils/config')
 const User = require('../schemas/user')
 const Room = require('../schemas/room')
-const schedule = require('node-schedule');
 
 const towers = require('./towers')
 
-//reset versus rooms daily at 00:00 UTC 
-const rule = new schedule.RecurrenceRule();
-rule.hour = 0;
-rule.minute = 0;
-rule.tz = 'Etc/UTC';
-const job = schedule.scheduleJob(rule, async function(){
-    await Room.deleteMany({})
-}) 
 
 versusRouter.get('/randomcode', async (req, res) => {
     let randomInt = Math.floor(Math.random() * 99999) + 1;
     let randomString = randomInt.toString().padStart(5, '0');
     res.status(200).json({code:randomString})
 })
-
 
 versusRouter.post('/join', async (req, res) => {
     let code = req.body.code
@@ -65,6 +55,52 @@ versusRouter.post('/join', async (req, res) => {
     })
 
 })
+
+
+versusRouter.post('/leave', async (req, res) => {
+    let code = req.body.code
+    let decodedToken
+    try{
+        decodedToken = jwt.verify(getTokenFrom(req), config.SECRET)
+    }
+    catch{
+        return res.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)  
+    if(user == null){
+        return res.status(404).json({error: "user not found"})
+    }
+
+    let room = await Room.findOne({code:code})
+
+    if(!room){
+        return res.status(400).json({ error: 'this room does not exist' })
+    }
+
+    if(!room.players.includes(user.username)){
+        return res.status(400).json({ error: 'you are not in this room' })
+    }
+
+    let userIndex = room.players.indexOf(user.username);
+
+    room.players.splice(userIndex, 1)
+
+    let playerAmount = room.players.length
+
+    await room.save()
+
+    if(playerAmount<1){
+        await Room.deleteOne({code:code});
+    }
+
+    return res.status(200).json({
+        code: room.code,
+        players: room.players,
+        guesses: room.guesses,
+        turn: room.turn
+    })
+})
+
 
 
 versusRouter.get('/room/:code', async (req, res) => {
