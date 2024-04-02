@@ -27,6 +27,10 @@ const App = () => {
   const [isLeaderboard, setIsLeaderboard] = useState(false);
   const [leaderboardDate, setLeaderboardDate] = useState(new Date(new Date().toDateString()));
   const [tutorial, setTutorial] = useState(false);
+  const [isVersus, setIsVersus] = useState(false);
+  const [roomCodeInput, setRoomCodeInput] = useState("");
+  const [roomJoined, setRoomJoined] = useState(false);
+  const [waitingForOpponent, setWaitingForOpponent] = useState(false);
 
   const notificationRef = useRef(null);
 
@@ -154,6 +158,37 @@ const App = () => {
       setGameOver(true);
     }
   }
+
+  const joinRoom = (event) =>{
+    event.preventDefault();
+    if(roomCodeInput.length !== 5) setNotification('Room code has to be 5 digits long');
+    else if(roomCodeInput.match(/[^$,.\d]/)) setNotification('Room code has to contain only numbers');
+    else{
+      Users.postVersusJoin(roomCodeInput).then(data =>{
+        setRoomJoined(true);
+        setWaitingForOpponent(true);
+        waitForOpponent();
+      }).catch(error => setNotification(error.response.data.error));
+    }
+  }
+
+  const getPlayerCount = () =>{
+    Users.getVersusData(roomCodeInput).then(data => {
+      console.log(data);
+      return data.players.length;
+    });
+  }
+  
+  const waitForOpponent = () =>{
+    
+    let playerCount = getPlayerCount();
+
+    setTimeout(() => {
+      if(playerCount !== 2) waitForOpponent();
+    }, 500);
+
+    setWaitingForOpponent(false);
+  }
   
   return(
     <>
@@ -227,23 +262,53 @@ const App = () => {
         <Tutorial/>
       </Overlay>
       ): null}
-
       
-      {gameStarted ? (
-        <>
-          <label>{dailyGame ? 'Daily Game' : 'Normal Game'}</label>
-          <GuessForm createGuess={addGuess} options={monkeys}/>
-        </>
-      ) : (
+      {!gameStarted && !isVersus ? (
         <div>
           <br/>
           <label>Play!</label><br/>
           <button onClick={()=>setTutorial(true)}>tutorial</button><br/>
           {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}><br/>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : <label style={{fontSize: 20, color: "#bf3c2e"}}><br/>login for daily</label>}
           <button style={{marginTop:0}} onClick={()=>handleGameStart(false)}>normal</button>
-        
+          {user ? <button style={{color: "#7f12a1"}} onClick={()=>setIsVersus(true)}>versus</button> : <label style={{fontSize: 20, color: "#7f12a1"}}><br/>login for daily</label>}
         </div>
-      )}
+      ) : null}
+
+      {gameStarted ? (
+        <div>
+          <label>{dailyGame ? 'Daily Game' : 'Normal Game'}</label>
+          <GuessForm createGuess={addGuess} options={monkeys}/>
+        </div>
+      ) :null}
+
+      {isVersus && !roomJoined ? (
+        <div>
+          <br/><br/>
+          <label style={{color: "#7f12a1"}}>Vesus!</label> <br/>
+          <button>Create New Room</button><br/><br/>
+          <form onSubmit={joinRoom}>
+            <label>Join Room</label><br/><br/>
+            <label>Code: </label><input className='roomcode' value={roomCodeInput} onChange={(text)=>setRoomCodeInput(text.target.value)}/><button type='submit'>Join</button>
+          </form>
+        </div>
+      ) :null}
+
+      {roomJoined ? (
+        <div>
+          <br/>
+          <label>Joined room <i>{roomCodeInput}</i></label>
+          <br/>
+          {waitingForOpponent ? 
+          <label>waiting for opponents...</label>
+          :
+          <label>the game idk</label>
+        }
+
+        </div>
+      ): null}
+
+      
+
       <br/>
       
       <div className='guessHolder'>

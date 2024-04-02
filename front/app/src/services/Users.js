@@ -60,6 +60,21 @@ const getLeaderboard = (date) => {
     return request.then(response => response.data.leaderboard);
 }
 
+const getRandomRoomCode = () => {
+    const request = axios.get(baseURL+"/api/daily/leaderboard");
+    return request.then(response => response.data.leaderboard);
+}
+
+const postVersusJoin = (code) => {
+    const request = axios.post(baseURL+"/api/versus/join", {"code" : code.toString()}, {headers: {Authorization: token},});
+    return request.then(response => response);
+}
+
+const getVersusData = (code) => {
+    const request = axios.get(baseURL+"/api/versus/room/"+code);
+    return request.then(response => response.data);
+}
+
 const exported = {
     setToken,
     login,
@@ -71,6 +86,9 @@ const exported = {
     getLeaderboardToday,
     postLeaderboardEntry,
     getLeaderboard,
+    getRandomRoomCode,
+    postVersusJoin,
+    getVersusData,
 }
 
 export default exported;

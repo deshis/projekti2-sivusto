@@ -34,6 +34,16 @@ button:hover{
     color: #000000;
 }
 
+input {
+    text-align:center;
+    color: #dbdbdb;
+    padding: 15px 25px;
+    max-height: 400px;
+    font-size: 25px;
+    border: 2px solid #2d2e36;
+    background-color: #1e1f26;
+}
+
 .Notification{
     color: #bf3c2e;
     font: 30px "Arial";
@@ -76,16 +86,6 @@ button:hover{
     background-color: #dbdbdb !important;
     color: #000000;
 }
-
-.loginForm > input{
-    text-align:center;
-    color: #dbdbdb;
-    padding: 15px 25px;
-    max-height: 400px;
-    font-size: 25px;
-    border: 2px solid #2d2e36;
-    background-color: #1e1f26;
-}   
 
 .scoreHolder {
     min-width: 750px;
@@ -283,14 +283,7 @@ label .date{
 }
 
 .guessform > input{
-    text-align:center;
-    color: #dbdbdb;
-    padding: 15px 25px;
-    max-height: 400px;
     width: 500px;
-    font-size: 25px;
-    border: 2px solid #2d2e36;
-    background-color: #1e1f26;
 }   
 
 .guessform > button{
@@ -353,4 +346,9 @@ label .date{
 .active {
     background-color: #dbdbdb !important;
     color: #000000;
+}
+
+.roomcode {
+    width: 100px;
+    height: 20px;
 }
