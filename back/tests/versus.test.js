@@ -125,6 +125,8 @@ test('randomcode returns code', async () => {
         .auth(testUserToken, { type: 'bearer' })
         .send({"code":"12345"})
         .expect(200)
+
+    expect(response.body.players.includes("testaccount")).toBe(false)
   })
 
   test('empty room gets deleted', async () => {
