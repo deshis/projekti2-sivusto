@@ -8,7 +8,7 @@ test('GuessForm updates parent state and calls on submit', async () => {
     const user = userEvent.setup()
     const createGuess = jest.fn()
 
-    render(<GuessForm createGuess={createGuess} options={[]}/>)
+    render(<GuessForm createGuess={createGuess} options={[]} yourTurn={true}/>)
   
     const input = screen.getByRole('textbox')
     const sendButton = screen.getByText('submit')
@@ -17,7 +17,7 @@ test('GuessForm updates parent state and calls on submit', async () => {
     await user.click(sendButton)
   
     expect(createGuess.mock.calls).toHaveLength(1)
-    expect(createGuess.mock.calls[0][0].monkey).toBe('monkey?')
+    expect(createGuess.mock.calls[0][0].type).toBe('monkey?')
     
 })
 
@@ -52,7 +52,7 @@ test('GuessForm updates autocomplete correctly', async () => {
 
     Element.prototype.scrollIntoView = jest.fn();
 
-    render(<GuessForm createGuess={createGuess} options={options}/>)
+    render(<GuessForm createGuess={createGuess} options={options} yourTurn={true}/>)
   
     const input = screen.getByPlaceholderText("Who's that monkey ⁉️");
     
