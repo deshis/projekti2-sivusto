@@ -159,20 +159,6 @@ const App = () => {
     }
   }
 
-  let waitloop = false;
-
-  const createRoom = () => {
-    Users.getRandomRoomCode().then(code => {
-      setRoomCodeInput(code);
-      Users.postVersusJoin(code).then(data =>{
-        setRoomJoined(true);
-        setWaitingForOpponent(true);
-        waitloop = true;
-        waitForOpponent();
-      });
-    })
-  }
-
   const joinRoom = (event) =>{
     event.preventDefault();
     if(roomCodeInput.length !== 5) setNotification('Room code has to be 5 digits long');
@@ -181,35 +167,27 @@ const App = () => {
       Users.postVersusJoin(roomCodeInput).then(data =>{
         setRoomJoined(true);
         setWaitingForOpponent(true);
-        waitloop = true;
         waitForOpponent();
-      });
+      }).catch(error => setNotification(error.response.data.error));
     }
   }
 
-  const checkOpponentCount = (data) =>{
-    if(!waitloop) return;
-    setTimeout(() => {
-      if(data.players.length !== 2 && waitloop){
-        console.log("waiting...");
-        waitForOpponent();
-      }else setWaitingForOpponent(false);
-    }, 500);
+  const getPlayerCount = () =>{
+    Users.getVersusData(roomCodeInput).then(data => {
+      console.log(data);
+      return data.players.length;
+    });
   }
   
   const waitForOpponent = () =>{
-    if(!waitloop) return;
-    Users.getVersusData(roomCodeInput, checkOpponentCount)
-  }
+    
+    let playerCount = getPlayerCount();
 
-  const leaveRoom = () =>{
-    waitloop = false;
-    Users.cancelVersusDataRequest();
-    Users.postVersusLeave(roomCodeInput).then(data => {
-        setRoomJoined(false);
-        setWaitingForOpponent(false);
-        Users.resetAfterAbort();
-    }).catch(error => setNotification(error.response.data.error));
+    setTimeout(() => {
+      if(playerCount !== 2) waitForOpponent();
+    }, 500);
+
+    setWaitingForOpponent(false);
   }
   
   return(
@@ -307,7 +285,7 @@ const App = () => {
         <div>
           <br/><br/>
           <label style={{color: "#7f12a1"}}>Vesus!</label> <br/>
-          <button onClick={createRoom}>Create New Room</button><br/><br/>
+          <button>Create New Room</button><br/><br/>
           <form onSubmit={joinRoom}>
             <label>Join Room</label><br/><br/>
             <label>Code: </label><input className='roomcode' value={roomCodeInput} onChange={(text)=>setRoomCodeInput(text.target.value)}/><button type='submit'>Join</button>
@@ -324,9 +302,8 @@ const App = () => {
           <label>waiting for opponents...</label>
           :
           <label>the game idk</label>
-          }
+        }
 
-          <button onClick={leaveRoom}>leave room</button>
         </div>
       ): null}
 

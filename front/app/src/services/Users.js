@@ -3,8 +3,6 @@ const baseURL = 'https://projekti2-sivusto.onrender.com'
 
 let token = null;
 
-let controller = new AbortController();
-
 const setToken = newToken => {
     token = `Bearer ${newToken}`
 }
@@ -63,8 +61,8 @@ const getLeaderboard = (date) => {
 }
 
 const getRandomRoomCode = () => {
-    const request = axios.get(baseURL+"/api/versus/randomcode");
-    return request.then(response => response.data.code);
+    const request = axios.get(baseURL+"/api/daily/leaderboard");
+    return request.then(response => response.data.leaderboard);
 }
 
 const postVersusJoin = (code) => {
@@ -72,28 +70,9 @@ const postVersusJoin = (code) => {
     return request.then(response => response);
 }
 
-const postVersusLeave = (code) => {
-    const request = axios.post(baseURL+"/api/versus/leave", {"code" : code.toString()}, {headers: {Authorization: token},});
-    return request.then(response => response);
-}
-
-const getVersusData = (code, callback) => {
-    axios
-        .get(baseURL+"/api/versus/room/"+code, {signal: controller.signal})
-        .then(response => callback(response.data))
-        .catch((e) => {
-            if (axios.isCancel(e)) {
-                console.log("the cancel");
-                return;
-        }});
-}
-
-const cancelVersusDataRequest = () => {
-    controller.abort();
-}
-
-const resetAfterAbort = () => {
-    controller = new AbortController();
+const getVersusData = (code) => {
+    const request = axios.get(baseURL+"/api/versus/room/"+code);
+    return request.then(response => response.data);
 }
 
 const exported = {
@@ -109,10 +88,7 @@ const exported = {
     getLeaderboard,
     getRandomRoomCode,
     postVersusJoin,
-    postVersusLeave,
     getVersusData,
-    cancelVersusDataRequest,
-    resetAfterAbort,
 }
 
 export default exported;
