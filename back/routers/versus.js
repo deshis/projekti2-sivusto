@@ -130,8 +130,8 @@ versusRouter.post('/guess', async (req, res) => {
     try{
         decodedToken = jwt.verify(getTokenFrom(req), config.SECRET)
     }
-    catch(e){
-        return res.status(401).json({error: e})
+    catch{
+        return res.status(401).json({ error: 'token invalid' })
     }
     const user = await User.findById(decodedToken.id)  
     if(user == null){
