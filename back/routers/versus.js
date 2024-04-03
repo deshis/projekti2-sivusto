@@ -64,8 +64,7 @@ versusRouter.post('/leave', async (req, res) => {
         decodedToken = jwt.verify(getTokenFrom(req), config.SECRET)
     }
     catch(e){
-        console.log(e, e.stack);
-        return res.status(401).json({ error: 'token invalid' })
+        return res.status(401).json({error: e})
     }
     const user = await User.findById(decodedToken.id)  
     if(user == null){
