@@ -77,6 +77,14 @@ const postVersusLeave = (code) => {
     return request.then(response => response);
 }
 
+const postVersusGuess = (guess, code) => {
+    const config = {
+        headers: { Authorization: token},
+    }
+    const request = axios.post(baseURL+"/api/versus/guess", {"code" : code.toString(), "guess": guess}, config);
+    return request.then(response => response.data);
+} 
+
 const getVersusData = (code, callback) => {
     axios
         .get(baseURL+"/api/versus/room/"+code, {signal: controller.signal})
@@ -110,6 +118,7 @@ const exported = {
     getRandomRoomCode,
     postVersusJoin,
     postVersusLeave,
+    postVersusGuess,
     getVersusData,
     cancelVersusDataRequest,
     resetAfterAbort,

@@ -9,9 +9,9 @@ import Tutorial from './components/Tutorial'
 
 const App = () => {
   const [guesses, setGuesses] = useState([]);
-  const [monkey, setMonkey] = useState(null);
-  const [monkeyData, setMonkeyData] = useState(null);
-  const [monkeys, setMonkeys] = useState([]);
+  const [tower, setTower] = useState(null);
+  const [towerData, setTowerData] = useState(null);
+  const [towers, setTowers] = useState([]);
   const [isResultOverlay, setIsResultOverlay] = useState(false);
   const [mainPath, setMainPath] = useState(null)
   const [isLoginForm, setIsLoginForm] = useState(false);
@@ -31,6 +31,8 @@ const App = () => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [roomJoined, setRoomJoined] = useState(false);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
+  const [versusData, setVersusData] = useState(null);
+  const [yourTurn, setYourTurn] = useState(false);
 
   const notificationRef = useRef(null);
 
@@ -62,9 +64,13 @@ const App = () => {
 
   useEffect(() => {
     Towers.getTowerArray().then(towers => {
-      setMonkeys(towers);
+      setTowers(towers);
     });
   }, [])
+
+  useEffect(() => {
+    console.log(versusData)
+  }, [versusData])
 
   
   const updateDate = (change) => {
@@ -95,15 +101,15 @@ const App = () => {
 
     if(isDaily){
       Towers.getDailyTower().then(tower => {
-          setMonkey(tower);
+          setTower(tower);
           setMainPath(Towers.getLargestUpgrade(tower.upgrades));
-          Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
+          Towers.getTowerData(tower.type).then(data => setTowerData(data));
       });
     }else{
       Towers.getRandomTower().then(tower => {
-        setMonkey(tower);
+        setTower(tower);
         setMainPath(Towers.getLargestUpgrade(tower.upgrades));
-        Towers.getTowerData(tower.type).then(data => setMonkeyData(data));
+        Towers.getTowerData(tower.type).then(data => setTowerData(data));
     });}
   }
 
@@ -113,7 +119,7 @@ const App = () => {
       setDailyDone(true);
     }
     setIsResultOverlay(false);
-    setMonkey(null);
+    setTower(null);
     setGuesses([]);
     setGameOver(false);
     setScoreSaved(false);
@@ -131,7 +137,7 @@ const App = () => {
   }
 
   const saveScore = () =>{
-    const score = {daily: dailyGame, guesses: guesses.length, tower: monkey, time: Date.now()};
+    const score = {daily: dailyGame, guesses: guesses.length, tower: tower, time: Date.now()};
     Users.postScore(score);
     if(dailyGame){
       Users.postLeaderboardEntry(score);
@@ -141,25 +147,41 @@ const App = () => {
   }
 
   const addGuess = (newGuess) =>{
-    if(newGuess.monkey === undefined) {
+    if(newGuess.type === undefined) {
       setNotification('Your input is empty!');
       return;
     }
-    var success = monkeys.some(function(element) {
-      if (newGuess.monkey.toLowerCase() === element.toLowerCase()) {
+    var success = towers.some(function(element) {
+      if (newGuess.type.toLowerCase() === element.toLowerCase()) {
           setGuesses(guesses.concat(newGuess));  
           return true;
       }
       return false;
     });
-    if(!success) setNotification('Add an acceptable monkey!');
-    else if(monkey.upgrades.toString() === newGuess.paths.toString() && monkey.type === newGuess.monkey){
+    if(!success) setNotification('Add an acceptable tower!');
+    else if(tower.upgrades.toString() === newGuess.upgrades.toString() && tower.type === newGuess.tower){
       setIsResultOverlay(true);
       setGameOver(true);
     }
   }
 
-  let waitloop = false;
+  const versusGuess = (newGuess) =>{
+    if(newGuess.type === undefined) {
+      setNotification('Your input is empty!');
+      return;
+    }
+    
+    if (towers.includes(newGuess.type)){
+      Users.postVersusGuess(newGuess, roomCodeInput);
+      setGuesses(guesses.concat(newGuess));
+      console.log(guesses.concat(newGuess))
+    }
+    else{
+        setNotification('Add an acceptable tower!');
+    }
+  }
+
+  let leftRoom = true;
 
   const createRoom = () => {
     Users.getRandomRoomCode().then(code => {
@@ -167,9 +189,9 @@ const App = () => {
       Users.postVersusJoin(code).then(data =>{
         setRoomJoined(true);
         setWaitingForOpponent(true);
-        waitloop = true;
-        waitForOpponent();
-      });
+        leftRoom = false;
+        getVersusData();
+      }).catch(error => setNotification(error.response.data.error));
     })
   }
 
@@ -181,34 +203,53 @@ const App = () => {
       Users.postVersusJoin(roomCodeInput).then(data =>{
         setRoomJoined(true);
         setWaitingForOpponent(true);
-        waitloop = true;
-        waitForOpponent();
-      });
+        leftRoom = false;
+        getVersusData();
+      }).catch(error => setNotification(error.response.data.error));
     }
   }
 
-  const checkOpponentCount = (data) =>{
-    if(!waitloop) return;
+  const checkData = (data) =>{
+    if(leftRoom) return;
     setTimeout(() => {
-      if(data.players.length !== 2 && waitloop){
-        console.log("waiting...");
-        waitForOpponent();
-      }else setWaitingForOpponent(false);
+      if(leftRoom){
+        setWaitingForOpponent(false);
+        return;
+      }
+
+      if(data.players.length !== 2){
+        console.log("waiting for opponents...");
+      }else{
+        if(!tower) setTower(data.answer);
+
+        setWaitingForOpponent(false);
+        setVersusData(data);
+        setYourTurn(data.turn === user.username);
+
+        if(!yourTurn && data.guesses.length > guesses.length){
+          console.log(guesses.concat(data.guesses[guesses.length].guess))
+          setGuesses(guesses.concat(data.guesses[guesses.length].guess))
+        } 
+      }
+
+      getVersusData();
     }, 500);
   }
   
-  const waitForOpponent = () =>{
-    if(!waitloop) return;
-    Users.getVersusData(roomCodeInput, checkOpponentCount)
+  const getVersusData = () =>{
+    if(leftRoom) return;
+    Users.getVersusData(roomCodeInput, checkData)
   }
 
   const leaveRoom = () =>{
-    waitloop = false;
+    leftRoom = true;
     Users.cancelVersusDataRequest();
     Users.postVersusLeave(roomCodeInput).then(data => {
         setRoomJoined(false);
         setWaitingForOpponent(false);
         Users.resetAfterAbort();
+        setGuesses([]);
+        setYourTurn(false);
     }).catch(error => setNotification(error.response.data.error));
   }
   
@@ -299,14 +340,14 @@ const App = () => {
       {gameStarted ? (
         <div>
           <label>{dailyGame ? 'Daily Game' : 'Normal Game'}</label>
-          <GuessForm createGuess={addGuess} options={monkeys}/>
+          <GuessForm createGuess={addGuess} options={towers} yourTurn={true}/>
         </div>
       ) :null}
 
       {isVersus && !roomJoined ? (
         <div>
           <br/><br/>
-          <label style={{color: "#7f12a1"}}>Vesus!</label> <br/>
+          <label style={{color: "#7f12a1"}}>Versus!</label> <br/>
           <button onClick={createRoom}>Create New Room</button><br/><br/>
           <form onSubmit={joinRoom}>
             <label>Join Room</label><br/><br/>
@@ -316,18 +357,21 @@ const App = () => {
       ) :null}
 
       {roomJoined ? (
-        <div>
+          <div>
           <br/>
+          <label style={{color: "#7f12a1"}}>Versus!</label> <br/>
           <label>Joined room <i>{roomCodeInput}</i></label>
+          <button onClick={leaveRoom}>leave room</button>
           <br/>
           {waitingForOpponent ? 
-          <label>waiting for opponents...</label>
+            <label>waiting for opponents...</label>
           :
-          <label>the game idk</label>
+          <div>
+            <label>Game Started - {yourTurn ? "Your Turn" : "Opponents Turn"}</label>
+            <GuessForm createGuess={versusGuess} options={towers} yourTurn={yourTurn}/>
+          </div>
           }
-
-          <button onClick={leaveRoom}>leave room</button>
-        </div>
+          </div>
       ): null}
 
       
@@ -346,24 +390,24 @@ const App = () => {
         </div>
         ): null}
         {guesses.map((guess, i) =>
-          <Guess key={i} guess={guess} answer={monkey} index={i}/>
+          <Guess key={i} guess={guess} answer={tower} index={i}/>
         )}
       </div>
 
       {gameOver ? (<button onClick={handleRestart}>new game?</button>) : null}
 
       <Overlay isOpen={isResultOverlay} close={() => setIsResultOverlay(false)}>
-          {monkey && monkeyData && mainPath ? ( 
+          {tower && towerData && mainPath ? ( 
           <div>
             <div className='resultScreenText'>
-              <label><label className='type'>{monkey.type}</label> {monkey.upgrades.join("-")}</label><br/>
-              <label className='upgradeName'>{(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].name : monkeyData.type}</label> <br/>
-              <label>Category: <label className='category'>{monkeyData.category}</label></label><br/><br/>
-              <label className='desc'>{(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].description : monkeyData.description}</label><br/><br/>
+              <label><label className='type'>{tower.type}</label> {tower.upgrades.join("-")}</label><br/>
+              <label className='upgradeName'>{(mainPath.tier >= 0) ? towerData.upgrades[mainPath.path][mainPath.tier].name : towerData.type}</label> <br/>
+              <label>Category: <label className='category'>{towerData.category}</label></label><br/><br/>
+              <label className='desc'>{(mainPath.tier >= 0) ? towerData.upgrades[mainPath.path][mainPath.tier].description : towerData.description}</label><br/><br/>
             </div>
             <div className='resultScreenImage'>
               <br/>
-              <img src={(mainPath.tier >= 0) ? monkeyData.upgrades[mainPath.path][mainPath.tier].image : monkeyData.image} alt="monkey"/>
+              <img src={(mainPath.tier >= 0) ? towerData.upgrades[mainPath.path][mainPath.tier].image : towerData.image} alt="tower"/>
             </div>
             <br/>
             <label>Total guesses: <b>{guesses.length}</b> <br/></label>

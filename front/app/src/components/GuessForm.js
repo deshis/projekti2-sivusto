@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import Towers from '../services/Towers'
 
-const GuessForm = ({ createGuess, options }) => {
+const GuessForm = ({ createGuess, options, yourTurn }) => {
     const [newGuess, setNewGuess] = useState('')
     const [suggestions, setSuggestions] = useState([]);
     const [hideSuggestions, sethideSuggestions] = useState(false);
@@ -25,7 +25,7 @@ const GuessForm = ({ createGuess, options }) => {
 
     const guess = (event) =>{
         event.preventDefault()
-        createGuess({monkey: newGuess, paths: [parseInt(topPath), parseInt(midPath), parseInt(botPath)]});
+        createGuess({type: newGuess, upgrades: [parseInt(topPath), parseInt(midPath), parseInt(botPath)]});
         setNewGuess('')
         setSuggestions([]);
         imageRef.current.src = Towers.getDefaultTowerImage();
@@ -81,6 +81,7 @@ const GuessForm = ({ createGuess, options }) => {
 
     return (
         <div>
+            {yourTurn ?
             <form onSubmit={guess} className='guessform'>
                 <br/><br/>
                 <input 
@@ -135,6 +136,7 @@ const GuessForm = ({ createGuess, options }) => {
 
                 <button type="submit">submit</button>
             </form>
+            : null}
         </div>
     )
 }

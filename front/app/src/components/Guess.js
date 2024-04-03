@@ -12,17 +12,17 @@ const Guess = ({ guess, answer, index}) => {
   const botRef = useRef(null);
 
   useEffect(() => {
-    Towers.getTowerData(guess.monkey).then(data =>{
+    Towers.getTowerData(guess.type).then(data =>{
       const category = data.category;
       Towers.getTowerData(answer.type).then(data =>{
-        type.current.innerText = data.type === guess.monkey ? "✔️" : "❌";
+        type.current.innerText = data.type === guess.type ? "✔️" : "❌";
         categoryRef.current.innerText = data.category === category ? "✔️" : "❌";
-        topRef.current.innerText = answer.upgrades[0] === guess.paths[0] ? "✔️" : answer.upgrades[0] > guess.paths[0] ? "⏫" : "⏬";
-        midRef.current.innerText = answer.upgrades[1] === guess.paths[1] ? "✔️" : answer.upgrades[1] > guess.paths[1] ? "⏫" : "⏬";
-        botRef.current.innerText = answer.upgrades[2] === guess.paths[2] ? "✔️" : answer.upgrades[2] > guess.paths[2] ? "⏫" : "⏬";
+        topRef.current.innerText = answer.upgrades[0] === guess.upgrades[0] ? "✔️" : answer.upgrades[0] > guess.upgrades[0] ? "⏫" : "⏬";
+        midRef.current.innerText = answer.upgrades[1] === guess.upgrades[1] ? "✔️" : answer.upgrades[1] > guess.upgrades[1] ? "⏫" : "⏬";
+        botRef.current.innerText = answer.upgrades[2] === guess.upgrades[2] ? "✔️" : answer.upgrades[2] > guess.upgrades[2] ? "⏫" : "⏬";
       });
     });
-    Towers.getTowerTotalCost(guess.monkey, guess.paths).then(data =>{
+    Towers.getTowerTotalCost(guess.type, guess.upgrades).then(data =>{
       setCost(data);
       Towers.getTowerTotalCost(answer.type, answer.upgrades).then(data =>{
         costRef.current.innerText = data === cost ? "✔️" : data > cost ? "⏫" : "⏬";
@@ -33,7 +33,7 @@ const Guess = ({ guess, answer, index}) => {
   return (
       
     <div className="guessEntry" key={index}>
-      <label><label className="towerName">{guess.monkey}</label> <b>{guess.paths.join('-')}</b> <label className="cost">${cost}</label></label>
+      <label><label className="towerName">{guess.type}</label> <b>{guess.upgrades.join('-')}</b> <label className="cost">${cost}</label></label>
       <div className="row">
   
         <div key="type" className="column" ref={type}></div> 

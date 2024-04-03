@@ -34,7 +34,7 @@ button:hover{
     color: #000000;
 }
 
-input {
+input:not([type="range"]) {
     text-align:center;
     color: #dbdbdb;
     padding: 15px 25px;
@@ -304,7 +304,7 @@ label .date{
 
 .Upgrades{
     display: inline-block;
-    width: 400px;
+    width: 300px;
 }
 
 .slider {
