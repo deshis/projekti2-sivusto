@@ -63,7 +63,8 @@ versusRouter.post('/leave', async (req, res) => {
     try{
         decodedToken = jwt.verify(getTokenFrom(req), config.SECRET)
     }
-    catch{
+    catch(e){
+        console.log(e, e.stack);
         return res.status(401).json({ error: 'token invalid' })
     }
     const user = await User.findById(decodedToken.id)  
@@ -230,7 +231,7 @@ versusRouter.get('/room/:code/chat', async (req, res) => {
 const getTokenFrom = request => {
     const authorization = request.get('authorization')  
     if(authorization && authorization.startsWith('Bearer ')){
-        return authorization.replace('Bearer ', '')  
+        return authorization.replaceAll('Bearer ', '')  
     }
   return null
 }
