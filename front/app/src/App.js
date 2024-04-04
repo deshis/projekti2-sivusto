@@ -34,6 +34,8 @@ const App = () => {
   const [yourTurn, setYourTurn] = useState(false);
   const [versusData, setVersusData] = useState(null);
   const [guessCount, setGuessCount] = useState(0);
+  const [winner, setWinner] = useState("");
+  const [versusGameEnded, setVersusGameEnded] = useState(false);
 
   const notificationRef = useRef(null);
 
@@ -79,7 +81,6 @@ const App = () => {
     }else if(!roomJoined) return;
 
     if(versusData.guesses.length > guesses.length){
-      console.log(versusData);
       setGuesses(guesses.concat(versusData.guesses[guessCount-1].guess));
     }
   }, [guesses, guessCount, versusData, roomJoined]); 
@@ -96,6 +97,11 @@ const App = () => {
       });
     }
   }, [tower, guesses, roomJoined, mainPath]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(()=> {
+    if(versusGameEnded && winner === "" && versusData.guesses.length > 0)
+      setWinner(versusData.guesses[versusData.guesses.length-1].user);
+  }, [versusGameEnded, winner, versusData]);
   
   const updateDate = (change) => {
     setLeaderboard(null);
@@ -211,6 +217,7 @@ const App = () => {
 
   const handleVersusGameOver = () => {
     setIsResultOverlay(true);
+    setVersusGameEnded(true);
   }
 
   const createRoom = () => {
@@ -275,6 +282,10 @@ const App = () => {
         setGuesses([]);
         setGuessCount(0);
         setIsResultOverlay(false);
+        setMainPath(null);
+        setWinner("");
+        setRoomCodeInput("");
+        setVersusGameEnded(false);
         Users.resetAfterAbort();
     }).catch(error => setNotification(error.response.data.error));
   }
@@ -396,8 +407,8 @@ const App = () => {
             <label>waiting for opponents...</label>
           :
           <div>
-            <label>Game Started - {yourTurn ? "Your Turn" : "Opponents Turn"}</label>
-            <GuessForm createGuess={versusGuess} options={towers} yourTurn={yourTurn}/>
+            <label>Game Started - {versusGameEnded ? "Game Ended" : yourTurn ? "Your Turn" : "Opponents Turn"}</label>
+            <GuessForm createGuess={versusGuess} options={towers} yourTurn={versusGameEnded ? false : yourTurn}/>
           </div>
           }
           </div>
@@ -443,8 +454,8 @@ const App = () => {
             </div>
             <br/>
             <label>Total guesses: <b>{guesses.length}</b> <br/></label>
-            {isVersus && versusData.guesses > 0 ? <label>winner: {versusData.guesses[versusData.guesses.length-1].user}</label>
-            : (!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p>)}
+            {isVersus && winner ? <label>winner: {winner}</label>:null}
+            {isVersus ? null : (!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p>)}
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
           }
