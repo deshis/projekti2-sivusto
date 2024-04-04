@@ -7,6 +7,18 @@ const Room = require('../schemas/room')
 
 const towers = require('./towers')
 
+const schedule = require('node-schedule');
+
+const job = schedule.scheduleJob('*/10 * * * *', async function(){
+    const rooms = await Room.find({})
+    console.log(rooms)
+    rooms.forEach(async (room) => {
+        let roomAge = Date.now()-room.created
+        if(roomAge>3600000){ //1 hour
+            await Room.deleteOne({code:room.code});
+        }
+    })
+}) 
 
 versusRouter.get('/randomcode', async (req, res) => {
     let randomInt = Math.floor(Math.random() * 99999) + 1;
@@ -31,7 +43,7 @@ versusRouter.post('/join', async (req, res) => {
     let room = await Room.findOne({code:code})
 
     if(!room){
-        room = new Room({code:code, turn:user.username, answer:towers.generateTower()})
+        room = new Room({code:code, turn:user.username, answer:towers.generateTower(), created: Date.now()})
         await room.save()
     }
 

@@ -11,8 +11,9 @@ const roomSchema = new mongoose.Schema({
         players: Array,
         guesses: Array,
         chat: Array,
-        answer: Object
-  })
+        answer: Object,
+        created: Date,
+})
 
   roomSchema.set('toJSON', {
     transform: (document, returnedObject) => {
