@@ -90,10 +90,22 @@ test('randomcode returns code', async () => {
   })
 
   test('adding a guess fails when not your turn', async () => {
-    const response = await api
+    let response = await api
         .post('/api/versus/guess')
         .send({"code":"12345", "guess":"Dart Monkey"})
         .auth(testUserToken, { type: 'bearer' })
+        .expect(400)
+
+    response = await api
+        .post('/api/versus/guess')
+        .send({"code":"12345", "guess":"Dart Monkey"})
+        .auth(guyToken, { type: 'bearer' })
+        .expect(201)
+
+    response = await api
+        .post('/api/versus/guess')
+        .send({"code":"12345", "guess":"Dart Monkey"})
+        .auth(guyToken, { type: 'bearer' })
         .expect(400)
   })
 

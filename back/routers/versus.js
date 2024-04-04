@@ -166,7 +166,7 @@ versusRouter.post('/guess', async (req, res) => {
 
     room.guesses.push({user:user.username, guess:guess})
 
-    let turnIndex = room.turn.indexOf(user.username)
+    let turnIndex = room.players.indexOf(user.username)
 
     if(turnIndex==0){
         room.turn=room.players[1]
