@@ -33,7 +33,6 @@ const App = () => {
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
   const [yourTurn, setYourTurn] = useState(false);
   const [versusData, setVersusData] = useState(null);
-  const [winner, setWinner] = useState("");
   const [guessCount, setGuessCount] = useState(0);
 
   const notificationRef = useRef(null);
@@ -73,10 +72,29 @@ const App = () => {
   useEffect(()=> {
     if(!versusData) return;
 
-    if(versusData.guesses.length > guesses.length) 
-      setGuesses(guesses.concat(versusData.guesses[guessCount-1].guess));
-  }, [guesses, guessCount, versusData]);
+    if(!roomJoined && guesses > 0){
+      setGuesses([]);
+      setIsResultOverlay(false);
+      return;
+    }else if(!roomJoined) return;
 
+    if(versusData.guesses.length > guesses.length){
+      setGuesses(guesses.concat(versusData.guesses[guessCount-1].guess));
+    }
+  }, [guesses, guessCount, versusData, roomJoined]); 
+
+  useEffect(()=> {
+    if(!tower || !guesses || !roomJoined || mainPath) return;
+    if(guesses <= 0) return;
+
+    if(tower.upgrades.toString() === guesses[guesses.length-1].upgrades.toString()  && tower.type === guesses[guesses.length-1].type){
+      Towers.getTowerData(tower.type).then(data => {
+        setTowerData(data);
+        setMainPath(Towers.getLargestUpgrade(tower.upgrades));
+        handleVersusGameOver();
+      });
+    }
+  }, [tower, guesses, roomJoined, mainPath]); // eslint-disable-line react-hooks/exhaustive-deps
   
   const updateDate = (change) => {
     setLeaderboard(null);
@@ -119,13 +137,14 @@ const App = () => {
   }
 
   const handleRestart = () =>{
+    if(isVersus){
+      leaveRoom();
+      return;
+    }
     if(dailyGame){
       Users.postDailyDone();
       setDailyDone(true);
     }
-    if(isVersus) leaveRoom();
-
-    setIsResultOverlay(false);
     setTower(null);
     setGuesses([]);
     setGameOver(false);
@@ -187,20 +206,10 @@ const App = () => {
         setNotification('Add an acceptable tower!');
         return;
     }
-
-
-    if(tower.upgrades.toString() === newGuess.upgrades.toString()  && tower.type === newGuess.type){
-      Towers.getTowerData(tower.type).then(data => {
-        setTowerData(data);
-        setMainPath(Towers.getLargestUpgrade(tower.upgrades));
-        handleVersusGameOver();
-      });
-    }
   }
 
   const handleVersusGameOver = () => {
     setIsResultOverlay(true);
-    setWinner(versusData.turn);
   }
 
   const createRoom = () => {
@@ -259,9 +268,11 @@ const App = () => {
     Users.postVersusLeave(roomCodeInput).then(data => {
         setRoomJoined(false);
         setWaitingForOpponent(false);
-        Users.resetAfterAbort();
-        setGuesses([]);
         setYourTurn(false);
+        setTower(null);
+        setGuesses([]);
+        setIsResultOverlay(false);
+        Users.resetAfterAbort();
     }).catch(error => setNotification(error.response.data.error));
   }
   
@@ -429,7 +440,7 @@ const App = () => {
             </div>
             <br/>
             <label>Total guesses: <b>{guesses.length}</b> <br/></label>
-            {isVersus ? <label>winner: {winner}</label>
+            {isVersus ? <label>winner: {versusData.guesses[versusData.guesses.length-1].user}</label>
             : (!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p>)}
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
