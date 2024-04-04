@@ -11,7 +11,6 @@ const schedule = require('node-schedule');
 
 const job = schedule.scheduleJob('*/10 * * * *', async function(){
     const rooms = await Room.find({})
-    console.log(rooms)
     rooms.forEach(async (room) => {
         let roomAge = Date.now()-room.created
         if(roomAge>3600000){ //1 hour
