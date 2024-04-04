@@ -274,12 +274,23 @@ label .date{
 .guessHolder {
     min-width: 1000px;
     max-width: 1250px;
+    height: 300px;
+    overflow: auto;
     margin: auto;
     text-align: center;
+    border: 5px solid #74291f;
+    border-radius: 15px;
+}
+
+.guessHolder:empty {
+    border: none;
 }
 
 .guessform{
-    width: 100%;
+    width: 700px;
+    margin: auto;
+    border: 5px solid #74291f;
+    border-radius: 15px;
 }
 
 .guessform > input{
@@ -323,6 +334,10 @@ label .date{
     cursor: pointer;
     overflow: auto;
     margin: auto;
+    z-index: 10;
+    position:absolute;
+    left: 0;
+    right: 0;
 }
   
 .suggestions > div {

@@ -31,8 +31,12 @@ const App = () => {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [roomJoined, setRoomJoined] = useState(false);
   const [waitingForOpponent, setWaitingForOpponent] = useState(false);
-  const [versusData, setVersusData] = useState(null);
   const [yourTurn, setYourTurn] = useState(false);
+  const [versusData, setVersusData] = useState(null);
+  const [winner, setWinner] = useState("");
+
+  let guessCount = 0;
+  let leftRoom = true;
 
   const notificationRef = useRef(null);
 
@@ -68,10 +72,7 @@ const App = () => {
     });
   }, [])
 
-  useEffect(() => {
-    console.log(versusData)
-  }, [versusData])
-
+  useEffect(()=> console.log(leftRoom), [leftRoom]);
   
   const updateDate = (change) => {
     setLeaderboard(null);
@@ -118,6 +119,8 @@ const App = () => {
       Users.postDailyDone();
       setDailyDone(true);
     }
+    if(isVersus) leaveRoom();
+
     setIsResultOverlay(false);
     setTower(null);
     setGuesses([]);
@@ -159,7 +162,7 @@ const App = () => {
       return false;
     });
     if(!success) setNotification('Add an acceptable tower!');
-    else if(tower.upgrades.toString() === newGuess.upgrades.toString() && tower.type === newGuess.tower){
+    else if(tower.upgrades.toString() === newGuess.upgrades.toString() && tower.type === newGuess.type){
       setIsResultOverlay(true);
       setGameOver(true);
     }
@@ -174,14 +177,27 @@ const App = () => {
     if (towers.includes(newGuess.type)){
       Users.postVersusGuess(newGuess, roomCodeInput);
       setGuesses(guesses.concat(newGuess));
-      console.log(guesses.concat(newGuess))
+      guessCount++;
     }
     else{
         setNotification('Add an acceptable tower!');
+        return;
+    }
+
+
+    if(tower.upgrades.toString() === newGuess.upgrades.toString()  && tower.type === newGuess.type){
+      Towers.getTowerData(tower.type).then(data => {
+        setTowerData(data);
+        setMainPath(Towers.getLargestUpgrade(tower.upgrades));
+        handleVersusGameOver();
+      });
     }
   }
 
-  let leftRoom = true;
+  const handleVersusGameOver = () => {
+    setIsResultOverlay(true);
+    setWinner(versusData.turn);
+  }
 
   const createRoom = () => {
     Users.getRandomRoomCode().then(code => {
@@ -191,6 +207,7 @@ const App = () => {
         setWaitingForOpponent(true);
         leftRoom = false;
         getVersusData();
+        guessCount = 0;
       }).catch(error => setNotification(error.response.data.error));
     })
   }
@@ -223,12 +240,12 @@ const App = () => {
         if(!tower) setTower(data.answer);
 
         setWaitingForOpponent(false);
-        setVersusData(data);
         setYourTurn(data.turn === user.username);
+        setVersusData(data);
 
-        if(!yourTurn && data.guesses.length > guesses.length){
-          console.log(guesses.concat(data.guesses[guesses.length].guess))
-          setGuesses(guesses.concat(data.guesses[guesses.length].guess))
+        if(!yourTurn && data.guesses.length > guessCount && guesses.length === guessCount){
+          setGuesses(guesses.concat(data.guesses[guessCount].guess))
+          guessCount++;
         } 
       }
 
@@ -325,6 +342,9 @@ const App = () => {
         <Tutorial/>
       </Overlay>
       ): null}
+
+      {gameStarted ? <label><b>{dailyGame ? 'Daily Game' : 'Normal Game'}</b></label> : null}
+      <br/>
       
       {!gameStarted && !isVersus ? (
         <div>
@@ -339,7 +359,7 @@ const App = () => {
 
       {gameStarted ? (
         <div>
-          <label>{dailyGame ? 'Daily Game' : 'Normal Game'}</label>
+          <br/>
           <GuessForm createGuess={addGuess} options={towers} yourTurn={true}/>
         </div>
       ) :null}
@@ -374,25 +394,28 @@ const App = () => {
           </div>
       ): null}
 
-      
-
-      <br/>
-      
+      <br/><br/>
       <div className='guessHolder'>
         {guesses.length > 0 ? (
-        <div className="row">  
-          <div className="column" >Type</div> 
-          <div className="column" >Category</div>
-          <div className="column" >Top Path</div>
-          <div className="column" >Middle Path</div>
-          <div className="column" >Bottom Path</div>
-          <div className="column" >Cost</div>
+        <div>
+          <br/>
+          <div className="row">  
+            <div className="column" >Type</div> 
+            <div className="column" >Category</div>
+            <div className="column" >Top Path</div>
+            <div className="column" >Middle Path</div>
+            <div className="column" >Bottom Path</div>
+            <div className="column" >Cost</div>
+          </div>
         </div>
         ): null}
         {guesses.map((guess, i) =>
           <Guess key={i} guess={guess} answer={tower} index={i}/>
         )}
       </div>
+      
+
+      <br/>
 
       {gameOver ? (<button onClick={handleRestart}>new game?</button>) : null}
 
@@ -411,7 +434,8 @@ const App = () => {
             </div>
             <br/>
             <label>Total guesses: <b>{guesses.length}</b> <br/></label>
-            {!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p> }
+            {isVersus ? <label>winner: {winner}</label>
+            : (!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p>)}
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
           }

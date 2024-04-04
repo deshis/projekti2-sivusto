@@ -20,14 +20,14 @@ const Guess = ({ guess, answer, index}) => {
         topRef.current.innerText = answer.upgrades[0] === guess.upgrades[0] ? "✔️" : answer.upgrades[0] > guess.upgrades[0] ? "⏫" : "⏬";
         midRef.current.innerText = answer.upgrades[1] === guess.upgrades[1] ? "✔️" : answer.upgrades[1] > guess.upgrades[1] ? "⏫" : "⏬";
         botRef.current.innerText = answer.upgrades[2] === guess.upgrades[2] ? "✔️" : answer.upgrades[2] > guess.upgrades[2] ? "⏫" : "⏬";
-      });
-    });
+      }).catch(error => console.log(error));
+    }).catch(error => console.log(error));
     Towers.getTowerTotalCost(guess.type, guess.upgrades).then(data =>{
       setCost(data);
       Towers.getTowerTotalCost(answer.type, answer.upgrades).then(data =>{
         costRef.current.innerText = data === cost ? "✔️" : data > cost ? "⏫" : "⏬";
-      });
-    });
+      }).catch(error => console.log(error));
+    }).catch(error => console.log(error));
   });
   
   return (
