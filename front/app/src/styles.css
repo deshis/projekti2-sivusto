@@ -291,6 +291,36 @@ label .date{
     margin: auto;
     border: 5px solid #74291f;
     border-radius: 15px;
+    height: 500px;
+}
+
+.chat{
+    width: 500px;
+    margin: auto;
+    border: 5px solid #74291f;
+    border-radius: 15px;
+    height: 500px;
+    display: flex;
+    flex-direction:column;
+}
+
+.chatHolder{
+    overflow: auto;
+}
+
+.chatMessage{
+    text-align: left;
+    padding: 5px;
+    padding-left: 20px;
+}
+
+.chatMessage .chatUser{
+    color:#bf3c2e;
+    font-weight: bold;
+}
+
+.chatInput{
+    width: 200px;
 }
 
 .guessform > input{

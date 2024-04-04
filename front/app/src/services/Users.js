@@ -96,6 +96,19 @@ const getVersusData = (code, callback) => {
         }});
 }
 
+const postChat = (code, message) => {
+    const config = {
+        headers: { Authorization: token},
+    }
+    const request = axios.post(baseURL+"/api/versus/room/"+code+"/chat", {"message": message}, config);
+    return request.then(response => response.data);
+} 
+
+const getChatMessages = (code) => {
+    const request = axios.get(baseURL+"/api/versus/room/"+code+"/chat");
+    return request.then(response => response.data);
+} 
+
 const cancelVersusDataRequest = () => {
     controller.abort();
 }
@@ -120,6 +133,8 @@ const exported = {
     postVersusLeave,
     postVersusGuess,
     getVersusData,
+    postChat,
+    getChatMessages,
     cancelVersusDataRequest,
     resetAfterAbort,
 }

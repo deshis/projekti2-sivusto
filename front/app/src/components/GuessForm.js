@@ -138,7 +138,7 @@ const GuessForm = ({ createGuess, options, yourTurn }) => {
 
                 <button type="submit">submit</button>
             </form>
-            : null}
+            : <div className='guessform'><img style={{maxWidth: '100%', maxHeight: '100%', height: 'auto'}}src={"https://media1.tenor.com/m/rP9NWJPKIXQAAAAC/boog-moog.gif"} alt="monkey"/></div>}
         </div>
     )
 }

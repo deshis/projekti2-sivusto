@@ -36,6 +36,8 @@ const App = () => {
   const [guessCount, setGuessCount] = useState(0);
   const [winner, setWinner] = useState("");
   const [versusGameEnded, setVersusGameEnded] = useState(false);
+  const [chat, setChat] = useState([]);
+  const [newChat, setNewChat] = useState("");
 
   const notificationRef = useRef(null);
 
@@ -255,6 +257,10 @@ const App = () => {
         if(!yourTurn && data.guesses.length > guesses.length){
           setGuessCount(data.guesses.length);
         } 
+
+        Users.getChatMessages(roomCodeInput).then(data => {
+          if(chat !== data.messages) setChat(data.messages);
+        });
       }
 
       getVersusData();
@@ -273,20 +279,28 @@ const App = () => {
 
   const leaveRoom = () =>{
     Users.cancelVersusDataRequest();
+    setVersusData(null);
+    setRoomJoined(false);
+    setWaitingForOpponent(false);
+    setYourTurn(false);
+    setTower(null);
+    setGuesses([]);
+    setGuessCount(0);
+    setIsResultOverlay(false);
+    setMainPath(null);
+    setWinner("");
+    setRoomCodeInput("");
+    setVersusGameEnded(false);
+    setChat([]);
     Users.postVersusLeave(roomCodeInput).then(data => {
-        setVersusData(null);
-        setRoomJoined(false);
-        setWaitingForOpponent(false);
-        setYourTurn(false);
-        setTower(null);
-        setGuesses([]);
-        setGuessCount(0);
-        setIsResultOverlay(false);
-        setMainPath(null);
-        setWinner("");
-        setRoomCodeInput("");
-        setVersusGameEnded(false);
         Users.resetAfterAbort();
+    }).catch(error => setNotification(error.response.data.error));
+  }
+
+  const postChat = (event) => {
+    event.preventDefault();
+    Users.postChat(roomCodeInput, newChat).then(data => {
+      setNewChat("");
     }).catch(error => setNotification(error.response.data.error));
   }
   
@@ -408,7 +422,25 @@ const App = () => {
           :
           <div>
             <label>Game Started - {versusGameEnded ? "Game Ended" : yourTurn ? "Your Turn" : "Opponents Turn"}</label>
-            <GuessForm createGuess={versusGuess} options={towers} yourTurn={versusGameEnded ? false : yourTurn}/>
+            <div style={{display: 'flex', maxWidth: '1300px', margin: 'auto', padding: '25px'}}>
+              <GuessForm createGuess={versusGuess} options={towers} yourTurn={versusGameEnded ? false : yourTurn}/>
+              <div className='chat'>
+              <br/>
+              <label>Chat</label>
+              <div className='chatHolder'>
+              {chat ? chat.map((message, i) => 
+                <div className='chatMessage' key={i}>
+                  <label><label className='chatUser'>{message.user}</label>: {message.message}</label>
+                </div>
+              ): null}
+              </div>
+              <div style={{marginTop: 'auto'}}>
+              <form onSubmit={postChat}>
+                <label>chat: </label><input className='chatInput' value={newChat} onChange={(text)=>setNewChat(text.target.value)}/><button type='submit'>Post</button>
+              </form>
+              </div>
+              </div>
+            </div>
           </div>
           }
           </div>
