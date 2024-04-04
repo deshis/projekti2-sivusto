@@ -99,9 +99,9 @@ const App = () => {
   }, [tower, guesses, roomJoined, mainPath]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(()=> {
-    if(versusGameEnded && winner === "" && versusData.guesses.length > 0)
+    if(versusGameEnded && winner === "" && versusData.guesses.length === guesses.length)
       setWinner(versusData.guesses[versusData.guesses.length-1].user);
-  }, [versusGameEnded, winner, versusData]);
+  }, [versusGameEnded, winner, versusData, guesses.length]);
   
   const updateDate = (change) => {
     setLeaderboard(null);
