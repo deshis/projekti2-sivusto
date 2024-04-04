@@ -19,9 +19,11 @@ const GuessForm = ({ createGuess, options, yourTurn }) => {
     });
 
     useEffect(()=>{
+        if(!yourTurn) return;
+
         if(options.indexOf(newGuess) > -1) imageRef.current.src = Towers.getTowerImage(newGuess, [topPath, midPath, botPath]);
         else imageRef.current.src = Towers.getDefaultTowerImage();
-    }, [topPath, midPath, botPath, newGuess, options]);
+    }, [topPath, midPath, botPath, newGuess, options, yourTurn]);
 
     const guess = (event) =>{
         event.preventDefault()
