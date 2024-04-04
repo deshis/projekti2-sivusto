@@ -34,9 +34,7 @@ const App = () => {
   const [yourTurn, setYourTurn] = useState(false);
   const [versusData, setVersusData] = useState(null);
   const [winner, setWinner] = useState("");
-
-  let guessCount = 0;
-  let leftRoom = true;
+  const [guessCount, setGuessCount] = useState(0);
 
   const notificationRef = useRef(null);
 
@@ -72,7 +70,13 @@ const App = () => {
     });
   }, [])
 
-  useEffect(()=> console.log(leftRoom), [leftRoom]);
+  useEffect(()=> {
+    if(!versusData) return;
+
+    if(versusData.guesses.length > guesses.length) 
+      setGuesses(guesses.concat(versusData.guesses[guessCount-1].guess));
+  }, [guesses, guessCount, versusData]);
+
   
   const updateDate = (change) => {
     setLeaderboard(null);
@@ -177,7 +181,7 @@ const App = () => {
     if (towers.includes(newGuess.type)){
       Users.postVersusGuess(newGuess, roomCodeInput);
       setGuesses(guesses.concat(newGuess));
-      guessCount++;
+      setGuessCount(guessCount+1);
     }
     else{
         setNotification('Add an acceptable tower!');
@@ -205,9 +209,6 @@ const App = () => {
       Users.postVersusJoin(code).then(data =>{
         setRoomJoined(true);
         setWaitingForOpponent(true);
-        leftRoom = false;
-        getVersusData();
-        guessCount = 0;
       }).catch(error => setNotification(error.response.data.error));
     })
   }
@@ -220,32 +221,22 @@ const App = () => {
       Users.postVersusJoin(roomCodeInput).then(data =>{
         setRoomJoined(true);
         setWaitingForOpponent(true);
-        leftRoom = false;
-        getVersusData();
       }).catch(error => setNotification(error.response.data.error));
     }
   }
 
   const checkData = (data) =>{
-    if(leftRoom) return;
+    if(!roomJoined) return;
     setTimeout(() => {
-      if(leftRoom){
-        setWaitingForOpponent(false);
-        return;
-      }
-
-      if(data.players.length !== 2){
-        console.log("waiting for opponents...");
-      }else{
+      if(data.players.length === 2){
         if(!tower) setTower(data.answer);
 
         setWaitingForOpponent(false);
         setYourTurn(data.turn === user.username);
         setVersusData(data);
-
-        if(!yourTurn && data.guesses.length > guessCount && guesses.length === guessCount){
-          setGuesses(guesses.concat(data.guesses[guessCount].guess))
-          guessCount++;
+        
+        if(!yourTurn && data.guesses.length > guesses.length){
+          setGuessCount(data.guesses.length);
         } 
       }
 
@@ -254,12 +245,16 @@ const App = () => {
   }
   
   const getVersusData = () =>{
-    if(leftRoom) return;
     Users.getVersusData(roomCodeInput, checkData)
   }
 
+  useEffect(()=> {
+    if(!roomJoined) return;
+
+    getVersusData(roomCodeInput);
+  }, [roomCodeInput, roomJoined]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const leaveRoom = () =>{
-    leftRoom = true;
     Users.cancelVersusDataRequest();
     Users.postVersusLeave(roomCodeInput).then(data => {
         setRoomJoined(false);
