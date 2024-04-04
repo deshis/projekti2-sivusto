@@ -79,6 +79,7 @@ const App = () => {
     }else if(!roomJoined) return;
 
     if(versusData.guesses.length > guesses.length){
+      console.log(versusData);
       setGuesses(guesses.concat(versusData.guesses[guessCount-1].guess));
     }
   }, [guesses, guessCount, versusData, roomJoined]); 
@@ -266,11 +267,13 @@ const App = () => {
   const leaveRoom = () =>{
     Users.cancelVersusDataRequest();
     Users.postVersusLeave(roomCodeInput).then(data => {
+        setVersusData(null);
         setRoomJoined(false);
         setWaitingForOpponent(false);
         setYourTurn(false);
         setTower(null);
         setGuesses([]);
+        setGuessCount(0);
         setIsResultOverlay(false);
         Users.resetAfterAbort();
     }).catch(error => setNotification(error.response.data.error));
@@ -440,7 +443,7 @@ const App = () => {
             </div>
             <br/>
             <label>Total guesses: <b>{guesses.length}</b> <br/></label>
-            {isVersus ? <label>winner: {versusData.guesses[versusData.guesses.length-1].user}</label>
+            {isVersus && versusData.guesses > 0 ? <label>winner: {versusData.guesses[versusData.guesses.length-1].user}</label>
             : (!scoreSaved ? <button onClick={saveScore}>save score</button> : <p style={{fontSize: "20px", color: "white", display: 'inline-block'}}>score saved as {user.username}</p>)}
             <button onClick={handleRestart}>new game?</button>
           </div> ) : null
