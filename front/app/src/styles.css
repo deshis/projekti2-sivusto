@@ -127,13 +127,21 @@ input:not([type="range"]) {
 }
 
 .tutorial {
-    max-height: 500px;
+    height: 500px;
     width: 700px;
     vertical-align:top;
-    overflow: auto;
     align-items: flex-start;
     display: flex;
     flex-wrap: wrap;
+}
+
+.tutorialContent {
+    flex-basis: 100%;
+    padding: 20px;
+    margin: 30px; 
+    text-align: left;
+    max-height: 350px;
+    overflow: auto;
 }
 
 .date {
