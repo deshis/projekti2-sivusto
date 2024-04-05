@@ -18,7 +18,6 @@ const App = () => {
   const [isScoresOverlay, setIsScoresOverlay] = useState(false);
   const [user, setUser] = useState(null);
   const [scores, setScores] = useState(null);
-  const [gameOver, setGameOver] = useState(false);
   const [scoreSaved, setScoreSaved] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [dailyGame, setDailyGame] = useState(false);
@@ -38,8 +37,12 @@ const App = () => {
   const [versusGameEnded, setVersusGameEnded] = useState(false);
   const [chat, setChat] = useState([]);
   const [newChat, setNewChat] = useState("");
+  const [creatingRoom, setCreatingRoom] = useState(false);
+  const [joiningRoom, setJoiningRoom] = useState(false);
 
   const notificationRef = useRef(null);
+  const chatRef = useRef(null);
+  const guessRef = useRef(null);
 
   //User stays logged in even when page refreshes
   useEffect(() => {
@@ -72,6 +75,16 @@ const App = () => {
       setTowers(towers);
     });
   }, [])
+
+  useEffect(() => {
+    if(!guessRef.current) return;
+    guessRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [guesses]);
+
+  useEffect(()=> {
+    if(!chatRef.current) return;
+    chatRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [chat]);
 
   useEffect(()=> {
     if(!versusData) return;
@@ -156,7 +169,6 @@ const App = () => {
     }
     setTower(null);
     setGuesses([]);
-    setGameOver(false);
     setScoreSaved(false);
     setGameStarted(false);
   }
@@ -196,7 +208,6 @@ const App = () => {
     if(!success) setNotification('Add an acceptable tower!');
     else if(tower.upgrades.toString() === newGuess.upgrades.toString() && tower.type === newGuess.type){
       setIsResultOverlay(true);
-      setGameOver(true);
     }
   }
 
@@ -225,12 +236,17 @@ const App = () => {
   const createRoom = () => {
     Users.getRandomRoomCode().then(code => {
       setRoomCodeInput(code);
+      setCreatingRoom(true);
       setTimeout(() => {
         Users.postVersusJoin(code).then(data =>{
+          setCreatingRoom(false);
           setRoomJoined(true);
           setWaitingForOpponent(true);
-        }).catch(error => setNotification(error.response.data.error));
-      }, 1000);
+        }).catch(error => {
+          setNotification(error.response.data.error);
+          setCreatingRoom(false);
+        });
+      }, 2000);
     })
   }
 
@@ -239,12 +255,17 @@ const App = () => {
     if(roomCodeInput.length !== 5) setNotification('Room code has to be 5 digits long');
     else if(roomCodeInput.match(/[^$,.\d]/)) setNotification('Room code has to contain only numbers');
     else{
+      setJoiningRoom(true);
       setTimeout(() => {
         Users.postVersusJoin(roomCodeInput).then(data =>{
+          setJoiningRoom(false);
           setRoomJoined(true);
           setWaitingForOpponent(true);
-        }).catch(error => setNotification(error.response.data.error));
-      }, 1000);
+        }).catch(error => {
+          setNotification(error.response.data.error);
+          setJoiningRoom(false);
+        });
+      }, 2000);
     }
   }
 
@@ -270,9 +291,11 @@ const App = () => {
   const checkChat = (data) =>{
     if(!roomJoined) return;
     setTimeout(() => {
-      if(chat !== data.messages) setChat(data.messages);
+      if(chat !== data.messages){
+        setChat(data.messages);
+      }
       getChatData();
-    }, 1000);
+    }, 500);
   }
   
   const getVersusData = () =>{
@@ -312,8 +335,13 @@ const App = () => {
 
   const postChat = (event) => {
     event.preventDefault();
+    if(newChat === ""){
+      setNotification("Can't send empty chat!");
+      return;
+    }
+
+    setNewChat("");
     Users.postChat(roomCodeInput, newChat).then(data => {
-      setNewChat("");
     }).catch(error => setNotification(error.response.data.error));
   }
   
@@ -322,6 +350,7 @@ const App = () => {
     setIsVersus(false);
     setDailyGame(false);
     setGameStarted(false);
+    handleRestart();
   } 
 
   return(
@@ -421,7 +450,7 @@ const App = () => {
         </div>
       ) :null}
 
-      {isVersus && !roomJoined ? (
+      {isVersus && !roomJoined && !joiningRoom && !creatingRoom ? (
         <div>
           <br/><br/>
           <label style={{color: "#7f12a1"}}>Versus!</label> <br/>
@@ -437,7 +466,7 @@ const App = () => {
           <div>
           <br/>
           <label style={{color: "#7f12a1"}}>Versus!</label> <br/>
-          <label>Joined room <i>{roomCodeInput}</i></label>
+          <label>Joined Room <i>{roomCodeInput}</i></label>
           <button onClick={leaveRoom}>leave room</button>
           <br/>
           {waitingForOpponent ? 
@@ -452,7 +481,7 @@ const App = () => {
               <label>Chat</label>
               <div className='chatHolder'>
               {chat ? chat.map((message, i) => 
-                <div className='chatMessage' key={i}>
+                <div className='chatMessage' key={i} ref={chatRef}>
                   <label><label className='chatUser'>{message.user}</label>: {message.message}</label>
                 </div>
               ): null}
@@ -467,7 +496,21 @@ const App = () => {
           </div>
           }
           </div>
-      ): null}
+      ): 
+      creatingRoom ? 
+      <div>
+        <br/>
+        <label style={{color: "#7f12a1"}}>Versus!</label> <br/><br/>
+        <label>Creating Room <i>{roomCodeInput}</i>...</label>
+      </div>
+      :
+      joiningRoom ?
+      <div>
+        <br/>
+        <label style={{color: "#7f12a1"}}>Versus!</label> <br/><br/>
+        <label>Joining Room <i>{roomCodeInput}</i>...</label>
+      </div>
+      : null}
 
       <br/><br/>
       <div className='guessHolder'>
@@ -485,14 +528,9 @@ const App = () => {
         </div>
         ): null}
         {guesses.map((guess, i) =>
-          <Guess key={i} guess={guess} answer={tower} index={i}/>
+          <Guess key={i} guess={guess} answer={tower} index={i} guessRef={guessRef}/>
         )}
       </div>
-      
-
-      <br/>
-
-      {gameOver ? (<button onClick={handleRestart}>new game?</button>) : null}
 
       <Overlay isOpen={isResultOverlay} close={() => setIsResultOverlay(false)}>
           {tower && towerData && mainPath ? ( 

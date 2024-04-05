@@ -45,23 +45,26 @@ input:not([type="range"]) {
 }
 
 .Notification{
-    color: #bf3c2e;
+    color: #f57463;
     font: 30px "Arial";
     border: 10px solid #74281f;
-    border-radius: 25px;
+    border-radius: 20px;
     padding: 10px;
     width: fit-content;
     height: fit-content;
     position: absolute;
     left: 0;
     right: 0;
-    margin: 0 auto;
-    bottom: 5%;
+    top: 0;
+    bottom: 0;
+    margin: auto auto;
     z-index: 10;
+    background-color: #312422;
 }
 
 .Notification:empty {
     border: hidden;
+    background-color: transparent;
 }
 
 .loginForm{
@@ -249,7 +252,6 @@ label .date{
     align-items: flex-start;
     flex-wrap: wrap;
     flex: 1;
-    transition: all 0.8s;
 }
 
 .column {
@@ -269,6 +271,12 @@ label .date{
 .guessEntry {
     border: 2px solid #2d2e36;
     padding: 10px;
+    animation: appear 0.75s;
+}
+
+@keyframes appear {
+    0% { transform: scale(0,0);}
+    100% { transform: scale(1,1);}
 }
 
 .guessHolder {
@@ -280,10 +288,15 @@ label .date{
     text-align: center;
     border: 5px solid #74291f;
     border-radius: 15px;
+    animation: appear 0.75s;
 }
 
 .guessHolder:empty {
     border: none;
+}
+
+.guessform{
+    animation: appear 0.75s;
 }
 
 .guessform .fadeIn{
@@ -312,6 +325,7 @@ label .date{
     height: 500px;
     display: flex;
     flex-direction:column;
+    animation: appear 0.75s;
 }
 
 .chatHolder{
@@ -370,7 +384,7 @@ label .date{
 
 .suggestions {
     max-height: 200px;
-    width: 550px;
+    width: 350px;
     cursor: pointer;
     overflow: auto;
     margin: auto;

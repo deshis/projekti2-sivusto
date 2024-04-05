@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Towers from "../services/Towers"
 
-const Guess = ({ guess, answer, index}) => {
+const Guess = ({ guess, answer, index, guessRef}) => {
   const [cost, setCost] = useState(0);
 
   const type = useRef(null);
@@ -32,7 +32,7 @@ const Guess = ({ guess, answer, index}) => {
   
   return (
       
-    <div className="guessEntry" key={index}>
+    <div className="guessEntry" key={index} ref={guessRef}>
       <label><label className="towerName">{guess.type}</label> <b>{guess.upgrades.join('-')}</b> <label className="cost">${cost}</label></label>
       <div className="row">
   
