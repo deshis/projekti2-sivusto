@@ -225,10 +225,12 @@ const App = () => {
   const createRoom = () => {
     Users.getRandomRoomCode().then(code => {
       setRoomCodeInput(code);
-      Users.postVersusJoin(code).then(data =>{
-        setRoomJoined(true);
-        setWaitingForOpponent(true);
-      }).catch(error => setNotification(error.response.data.error));
+      setTimeout(() => {
+        Users.postVersusJoin(code).then(data =>{
+          setRoomJoined(true);
+          setWaitingForOpponent(true);
+        }).catch(error => setNotification(error.response.data.error));
+      }, 1000);
     })
   }
 
@@ -237,10 +239,12 @@ const App = () => {
     if(roomCodeInput.length !== 5) setNotification('Room code has to be 5 digits long');
     else if(roomCodeInput.match(/[^$,.\d]/)) setNotification('Room code has to contain only numbers');
     else{
-      Users.postVersusJoin(roomCodeInput).then(data =>{
-        setRoomJoined(true);
-        setWaitingForOpponent(true);
-      }).catch(error => setNotification(error.response.data.error));
+      setTimeout(() => {
+        Users.postVersusJoin(roomCodeInput).then(data =>{
+          setRoomJoined(true);
+          setWaitingForOpponent(true);
+        }).catch(error => setNotification(error.response.data.error));
+      }, 1000);
     }
   }
 
@@ -313,6 +317,13 @@ const App = () => {
     }).catch(error => setNotification(error.response.data.error));
   }
   
+  const backToMenu = (event) => {
+    event.preventDefault();
+    setIsVersus(false);
+    setDailyGame(false);
+    setGameStarted(false);
+  } 
+
   return(
     <>
     <div style={{margin:'auto', textAlign:'center'}}>
@@ -385,9 +396,6 @@ const App = () => {
         <Tutorial/>
       </Overlay>
       ): null}
-
-      {gameStarted ? <label><b>{dailyGame ? 'Daily Game' : 'Normal Game'}</b></label> : null}
-      <br/>
       
       {!gameStarted && !isVersus ? (
         <div>
@@ -396,10 +404,16 @@ const App = () => {
           <button onClick={()=>setTutorial(true)}>tutorial</button><br/>
           {user ? (dailyDone ? <label style={{color: "#bf3c2e"}}><br/>daily done!</label> : <button style={{color: "#bf3c2e"}} onClick={()=>handleGameStart(true)}>daily</button>) : <label style={{fontSize: 20, color: "#bf3c2e"}}><br/>login for daily</label>}
           <button style={{marginTop:0}} onClick={()=>handleGameStart(false)}>normal</button>
-          {user ? <button style={{color: "#7f12a1"}} onClick={()=>setIsVersus(true)}>versus</button> : <label style={{fontSize: 20, color: "#7f12a1"}}><br/>login for daily</label>}
+          {user ? <button style={{color: "#7f12a1"}} onClick={()=>setIsVersus(true)}>versus</button> : <label style={{fontSize: 20, color: "#7f12a1"}}><br/>login for versus</label>}
         </div>
-      ) : null}
+      ) : !roomJoined ? <button onClick={backToMenu}>back to menu</button> : null}
 
+      <br/>
+
+      {gameStarted ? <label><b>{dailyGame ? 'Daily Game' : 'Normal Game'}</b></label> : null}
+
+      <br/>
+      
       {gameStarted ? (
         <div>
           <br/>
