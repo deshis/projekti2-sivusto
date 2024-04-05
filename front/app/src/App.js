@@ -257,24 +257,33 @@ const App = () => {
         if(!yourTurn && data.guesses.length > guesses.length){
           setGuessCount(data.guesses.length);
         } 
-
-        Users.getChatMessages(roomCodeInput).then(data => {
-          if(chat !== data.messages) setChat(data.messages);
-        });
       }
 
       getVersusData();
     }, 500);
   }
+
+  const checkChat = (data) =>{
+    if(!roomJoined) return;
+    setTimeout(() => {
+      if(chat !== data.messages) setChat(data.messages);
+      getChatData();
+    }, 1000);
+  }
   
   const getVersusData = () =>{
-    Users.getVersusData(roomCodeInput, checkData)
+    Users.getVersusData(roomCodeInput, checkData);
+  }
+
+  const getChatData = () =>{
+    Users.getChatMessages(roomCodeInput, checkChat);
   }
 
   useEffect(()=> {
     if(!roomJoined) return;
 
     getVersusData(roomCodeInput);
+    getChatData(roomCodeInput);
   }, [roomCodeInput, roomJoined]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const leaveRoom = () =>{

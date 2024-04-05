@@ -286,12 +286,22 @@ label .date{
     border: none;
 }
 
-.guessform{
+.guessform .fadeIn{
     width: 700px;
     margin: auto;
     border: 5px solid #74291f;
     border-radius: 15px;
     height: 500px;
+    transform: scale(1, 1);
+    transition: all 0.5s ease;
+}
+
+.guessform .fadeOut{
+    border: 0px solid #74291f;
+    width: 700px;
+    height: 500px;
+    transform: scale(0, 0);
+    transition: all 0.5s ease;
 }
 
 .chat{

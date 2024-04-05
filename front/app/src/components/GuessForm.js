@@ -83,8 +83,9 @@ const GuessForm = ({ createGuess, options, yourTurn }) => {
 
     return (
         <div>
-            {yourTurn ?
             <form onSubmit={guess} className='guessform'>
+            {yourTurn ?
+                <div className='fadeIn'>
                 <br/><br/>
                 <input 
                     value={newGuess} 
@@ -137,8 +138,8 @@ const GuessForm = ({ createGuess, options, yourTurn }) => {
                 </div>
 
                 <button type="submit">submit</button>
+                </div> : <div className='fadeOut'></div>}
             </form>
-            : <div className='guessform'><img style={{maxWidth: '100%', maxHeight: '100%', height: 'auto'}}src={"https://media1.tenor.com/m/rP9NWJPKIXQAAAAC/boog-moog.gif"} alt="monkey"/></div>}
         </div>
     )
 }

@@ -91,7 +91,7 @@ const getVersusData = (code, callback) => {
         .then(response => callback(response.data))
         .catch((e) => {
             if (axios.isCancel(e)) {
-                console.log("the cancel");
+                console.log("calls cancelled");
                 return;
         }});
 }
@@ -104,9 +104,15 @@ const postChat = (code, message) => {
     return request.then(response => response.data);
 } 
 
-const getChatMessages = (code) => {
-    const request = axios.get(baseURL+"/api/versus/room/"+code+"/chat");
-    return request.then(response => response.data);
+const getChatMessages = (code, callback) => {
+    axios
+        .get(baseURL+"/api/versus/room/"+code+"/chat", {signal: controller.signal})
+        .then(response => callback(response.data))
+        .catch((e) => {
+            if (axios.isCancel(e)) {
+                console.log("calls cancelled");
+                return;
+        }});
 } 
 
 const cancelVersusDataRequest = () => {
